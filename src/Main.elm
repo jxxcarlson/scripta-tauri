@@ -367,13 +367,15 @@ displayRenderedText model =
 
 inputText : Model -> Element Msg
 inputText model =
-    Input.multiline [ width (px 500), scrollbarY, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  Font.size 14, alignTop, htmlId "input-text" ]
+ el [ width (px 500), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  scrollbarY] (
+    Input.multiline [ width (px 500), height fill,  scrollbarY, Font.size 14, alignTop, htmlId "input-text" ]
         { onChange = InputText
         , text = model.input
         , placeholder = Nothing
         , label = Input.labelAbove [ fontGray 0.9 ] <| Element.none -- el [] (text "Source text")
         , spellcheck = False
         }
+ )
 
 
 
