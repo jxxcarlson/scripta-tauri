@@ -309,29 +309,29 @@ bgGray g =
 view : Model -> Html Msg
 view model =
     layoutWith { options = [ focusStyle noFocus ] }
-        [ bgGray 0.2,  height (px 650) ]
+        [ bgGray 0.2,  height fill, scrollbarY  ]
         (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        [ column [ spacing 18, width (px 1200), height (px 650) ]
-            [ -- title "Compiler Demo"
-              row [ spacing 18 ]
+        --[ column [ spacing 18, width (px 1200), height fill, scrollbarY  ]
+            [ --title "Compiler Demo"
+               row [ spacing 18, height fill, scrollbarY ]
                 [ inputText model
                 , displayRenderedText model
                 , controls model
                 ]
-            , row [ width (px 1200), Font.color (rgb 1 1 1), Font.size 14 ]
-                [ text <| model.message
-                ]
+            -- , row [ width (px 1200), Font.color (rgb 1 1 1), Font.size 14]
+            --     [ text <| model.message
+            --     ]
             ]
-        ]
+       -- ]
 
 
 controls model =
-    column [ alignTop, spacing 18, paddingXY 16 22 ]
+    column [ alignTop, spacing 18, paddingXY 16 22, height fill, scrollbarY, width (px 120)  ]
         [ setLanguageButton "L0" model.documentType L0Lang model.language
         , setLanguageButton "MicroLaTeX" model.documentType MicroLaTeXLang model.language
         , setLanguageButton "XMarkdown" model.documentType XMarkdownLang model.language
@@ -349,28 +349,29 @@ title str =
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
-    column [ spacing 8, Font.size 14 ]
-        [ el [ fontGray 0.9 ] (text "Rendered Text")
-        , column
+    -- column [ spacing 8, Font.size 14,  alignTop, height fill, scrollbarY, width (px 500) ]
+    --     [ el [ fontGray 0.9 ] (text "Rendered Text")
+         column
         [ spacing 18
+        , Font.size 14
         , Background.color (Element.rgb 1.0 1.0 1.0)
         , width (px 500)
-        , height (px 600)
+        , height fill
         , paddingXY 16 32
         , scrollbarY
         , htmlId "scripta-output"
         ]
         (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map Render))
-        ]
+        --]
 
 
 inputText : Model -> Element Msg
 inputText model =
-    Input.multiline [ width (px 500), scrollbarY, height (px 600), Font.size 14, alignTop, htmlId "input-text" ]
+    Input.multiline [ width (px 500), scrollbarY, height fill, Font.size 14, alignTop, htmlId "input-text" ]
         { onChange = InputText
         , text = model.input
         , placeholder = Nothing
-        , label = Input.labelAbove [ fontGray 0.9 ] <| el [] (text "Source text")
+        , label = Input.labelAbove [ fontGray 0.9 ] <| Element.none -- el [] (text "Source text")
         , spellcheck = False
         }
 
@@ -536,4 +537,5 @@ mainColumnStyle =
     , centerY
     , bgGray 0.4
     , paddingXY 20 20
+    , height fill, scrollbarY
     ]
