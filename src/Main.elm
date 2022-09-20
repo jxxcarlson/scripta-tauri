@@ -323,7 +323,7 @@ mainColumn model =
                 , displayRenderedText model
                 , controls model
                 ]
-            , row [ width (px 1200), Font.color (rgb 1 1 1), Font.size 14]
+            , row [ width (px 1200), Font.color (rgb 1 1 1), height (px 40), Font.size 14]
                 [ text <| model.message
                 ]
             ]
@@ -344,7 +344,7 @@ controls model =
 
 title : String -> Element msg
 title str =
-    row [ centerX, Font.bold, fontGray 0.9 ] [ text str ]
+    row [ centerX, height (px 40), Font.bold, fontGray 0.9 ] [ text str ]
 
 
 displayRenderedText : Model -> Element Msg
