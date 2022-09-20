@@ -351,13 +351,7 @@ displayRenderedText : Model -> Element Msg
 displayRenderedText model =
     column [ spacing 8, Font.size 14 ]
         [ el [ fontGray 0.9 ] (text "Rendered Text")
-        , outputDisplay_ model
-        ]
-
-
-outputDisplay_ : Model -> Element Msg
-outputDisplay_ model =
-    column
+        , column
         [ spacing 18
         , Background.color (Element.rgb 1.0 1.0 1.0)
         , width (px 500)
@@ -367,6 +361,7 @@ outputDisplay_ model =
         , htmlId "scripta-output"
         ]
         (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map Render))
+        ]
 
 
 inputText : Model -> Element Msg
