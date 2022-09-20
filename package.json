@@ -1,0 +1,17 @@
+{
+  "name": "scripta-tauri",
+  "version": "1.0.0",
+  "description": "scripta-tauri app",
+  "main": "index.js",
+  "dependencies": {
+    "elm-watch": "^1.0.2"
+  },
+  "devDependencies": {
+    "elm-live": "^4.0.2"
+  },
+  "scripts": {
+    "start": "watch \"elm make src/Main.elm --output=public/main.js\" src/**/*.elm"
+  },
+  "author": "",
+  "license": "ISC"
+}
