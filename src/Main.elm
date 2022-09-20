@@ -309,14 +309,14 @@ bgGray g =
 view : Model -> Html Msg
 view model =
     layoutWith { options = [ focusStyle noFocus ] }
-        [ bgGray 0.2,  height (px 700) ]
+        [ bgGray 0.2,  height (px 650) ]
         (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        [ column [ spacing 18, width (px 1400), height (px 750) ]
+        [ column [ spacing 18, width (px 1200), height (px 650) ]
             [ -- title "Compiler Demo"
               row [ spacing 18 ]
                 [ inputText model
