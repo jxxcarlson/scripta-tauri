@@ -2,6 +2,9 @@ scripts:
 
   dev: cargo tauri dev
 
+  build: cargo tauri build
+
   watch: npx elm-watch hot
    
   serve: npx serve public
+
