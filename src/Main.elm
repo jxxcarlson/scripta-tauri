@@ -316,18 +316,18 @@ view model =
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        --[ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY  ]
-            [ --title "Compiler Demo"
-               row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY ]
+        [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY  ]
+            [  title "Compiler Demo"
+               , row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY ]
                 [ inputText model
                 , displayRenderedText model
                 , controls model
                 ]
-            -- , row [ width (px 1200), Font.color (rgb 1 1 1), Font.size 14]
-            --     [ text <| model.message
-            --     ]
+            , row [ width (px 1200), Font.color (rgb 1 1 1), Font.size 14]
+                [ text <| model.message
+                ]
             ]
-       -- ]
+       ]
 
 
 controls model =
@@ -372,7 +372,7 @@ inputText model =
         { onChange = InputText
         , text = model.input
         , placeholder = Nothing
-        , label = Input.labelAbove [ fontGray 0.9 ] <| Element.none -- el [] (text "Source text")
+        , label = Input.labelAbove [ fontGray 0.9 ] <| el [] (text "Source text")
         , spellcheck = False
         }
  )
