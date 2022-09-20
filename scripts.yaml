@@ -2,7 +2,7 @@ scripts:
 
   dev: cargo tauri dev
 
-  build: cargo tauri build
+  build: cargo tauri build --target universal-apple-darwin
 
   watch: npx elm-watch hot
    

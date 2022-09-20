@@ -349,9 +349,9 @@ title str =
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
-    -- column [ spacing 8, Font.size 14,  alignTop, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), , scrollbarY, width (px 500) ]
-    --     [ el [ fontGray 0.9 ] (text "Rendered Text")
-         column
+    column [ spacing 8, Font.size 14,  alignTop, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 500) ]
+        [ el [ fontGray 0.9 ] (text "Rendered Text")
+         ,column
         [ spacing 18
         , Font.size 14
         , Background.color (Element.rgb 1.0 1.0 1.0)
@@ -362,7 +362,7 @@ displayRenderedText model =
         , htmlId "scripta-output"
         ]
         (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map Render))
-        --]
+        ]
 
 
 inputText : Model -> Element Msg
