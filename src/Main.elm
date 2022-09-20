@@ -309,16 +309,16 @@ bgGray g =
 view : Model -> Html Msg
 view model =
     layoutWith { options = [ focusStyle noFocus ] }
-        [ bgGray 0.2, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") , scrollbarY  ]
+        [ bgGray 0.2, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
         (mainColumn model)
 
 
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY  ]
+        [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
             [  title "Compiler Demo"
-               , row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY ]
+               , row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ inputText model
                 , displayRenderedText model
                 , controls model
@@ -346,17 +346,18 @@ title : String -> Element msg
 title str =
     row [ centerX, height (px 40), Font.bold, fontGray 0.9 ] [ text str ]
 
+windowHeight = 700
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
-    column [ spacing 8, Font.size 14,  alignTop, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 500) ]
+    column [ spacing 8, Font.size 14,  alignTop,  height (px windowHeight), Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 500) ]
         [ el [ fontGray 0.9 ] (text "Rendered Text")
          ,column
         [ spacing 18
         , Font.size 14
         , Background.color (Element.rgb 1.0 1.0 1.0)
         , width (px 500)
-        , height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
+        , height (px windowHeight), Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
         , paddingXY 16 32
         , scrollbarY
         , htmlId "scripta-output"
@@ -367,8 +368,8 @@ displayRenderedText model =
 
 inputText : Model -> Element Msg
 inputText model =
- el [ width (px 500), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  scrollbarY] (
-    Input.multiline [ width (px 500), height fill,  scrollbarY, Font.size 14, alignTop, htmlId "input-text" ]
+ el [ width (px 500),  height (px windowHeight), alignTop, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  scrollbarY] (
+    Input.multiline [ width (px 500), height (px windowHeight),  scrollbarY, Font.size 14, alignTop, htmlId "input-text" ]
         { onChange = InputText
         , text = model.input
         , placeholder = Nothing
@@ -539,5 +540,5 @@ mainColumnStyle =
     , centerY
     , bgGray 0.4
     , paddingXY 20 20
-    , height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY
+    , height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
     ]
