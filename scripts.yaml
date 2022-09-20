@@ -1,0 +1,7 @@
+scripts:
+
+  dev: cargo tauri dev
+
+  watch: npx elm-watch hot
+   
+  serve: npx serve public
