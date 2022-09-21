@@ -29,6 +29,11 @@
 <script type="module">
 
     import {pi} from './tauri.js'
+    
+    // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+    // Read the text file in the `$APPDIR/app.conf` path
+    // const contents = await readTextFile('app.conf', { dir: BaseDirectory.App });
+
 
 		var root = document.getElementById('main');
 		var app = Elm.Main.init({node: root, flags:  {  }});
@@ -37,8 +42,9 @@
     console.log("pi =", pi)
 
     app.ports.sendDocument.subscribe(data => {
-    console.log(JSON.stringify(data.name));
-});
+      console.log("I want to save", JSON.stringify(data.name));
+      window.__TAURI__.fs.writeTextFile("scripta/" + data.name, data.contents, { dir: window.__TAURI__.fs.BaseDirectory.App });
+    });
 
 </script>
 

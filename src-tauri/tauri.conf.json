@@ -13,6 +13,7 @@
   "tauri": {
     "allowlist": {
       "fs": {
+        "scope": ["$DESKTOP/scripta/*"],
         "all": true, 
         "readFile": true,
         "writeFile": true,
