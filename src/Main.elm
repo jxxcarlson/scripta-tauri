@@ -23,6 +23,7 @@ import Http
 import PDF exposing (PDFMsg(..))
 import Scripta.API
 import Scripta.Language exposing (Language(..))
+import Document exposing(Document)
 import Task
 import Text
 import Time
