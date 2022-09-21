@@ -102,9 +102,9 @@ settings counter =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
-      , document = { content = Text.microLaTeXDemo, name = "demo.tex"}
-      , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.microLaTeXDemo
-      , language = MicroLaTeXLang
+      , document = { content = Text.about, name = "about.L0"}
+      , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
+      , language = L0Lang
       , documentType = Example
       , currentTime = Time.millisToPosix 0
       , printingState = PDF.PrintWaiting
@@ -192,7 +192,7 @@ update msg model =
             
 
         Info ->
-         model |> loadDocument {content = Text.info, name = "info.L0"} 
+         model |> loadDocument {content = Text.about, name = "info.L0"} 
                |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
             
 
@@ -318,16 +318,25 @@ mainColumn model =
        ]
 
 
+controlSpacing = 6
+
 controls model =
-    column [ alignTop, spacing 18, paddingXY 16 22, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 120)  ]
-        [ saveDocumentButton model.document
-        , el [paddingXY 0 10]  (text "")
+    column [ alignTop, spacing 8, paddingXY 16 22, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 120)  ]
+        [ 
+          infoButton model.documentType
+        , el [paddingXY 0 controlSpacing]  (text "")
+        , newFileButton
+        , openFileButton
+        , saveDocumentButton model.document
+        , el [ paddingXY 0 controlSpacing ] (text "")
+        , tarFileButton model
+        , printToPDF model
+        , el [paddingXY 0 controlSpacing]  (text "")
+        , el [Font.size 16, Font.color Color.white] (text "Sample docs")
         , setLanguageButton "L0" model.documentType L0Lang model.language
         , setLanguageButton "MicroLaTeX" model.documentType MicroLaTeXLang model.language
         , setLanguageButton "XMarkdown" model.documentType XMarkdownLang model.language
-        , el [ paddingXY 0 40 ] (infoButton model.documentType)
-        , tarFileButton model
-        , printToPDF model
+       
         ]
 
 
@@ -494,6 +503,31 @@ setLanguageButton label documentType language currentLanguage =
         , label = label
         }
 
+newFileButton :  Element Msg
+newFileButton  =
+    let
+        foo = 1
+    in
+    Button.template
+        { tooltipText = "Open file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = NoOp
+        , label = "New"
+        }
+
+openFileButton : Element Msg
+openFileButton =
+    let
+        foo = 1
+    in
+    Button.template
+        { tooltipText = "Open docuemnt"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = NoOp
+        , label = "Open"
+        }        
 saveDocumentButton : Document -> Element Msg
 saveDocumentButton document =
     let

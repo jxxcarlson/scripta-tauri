@@ -1,4 +1,4 @@
-module Text exposing (info, l0Demo, microLaTeXDemo, testFile, xMarkdown, nada)
+module Text exposing (about, l0Demo, microLaTeXDemo, testFile, xMarkdown, nada)
 
 nada = """
 | title
@@ -7,108 +7,43 @@ Oops
 Sorry, no such document
 """
 
-info =
-    """
+about = """
+
 
 | title
-About the Scripta compiler
+Scripta Desktop
 
 | contents
-
-[tags jxxcarlson:about-the-scripta-compiler]
-
-| runninghead
-[link Scripta.io https://scripta.io]
 
 
 | section 1 -
 What it is
 
-The Scripta compiler transforms source text to HTML, where
-the source text is one of the following markup languages:
+With the Scripta you can create and edit documents in any one three 
+markup languages:
 
 | item
-L0 — an experimental language with syntax inspired by Lisp.
-Can render LaTeX-style
-mathematical text.  This document is written in L0.
+MicroLaTeX — similar to LaTeX
 
 | item
-MicroLaTeX — a cousin of LaTeX.  Source text can be exported
-to standard LaTeX
+XMarkdown — similar to Markdown, but you can do LaTeX-style mathematics
 
 | item
-XMarkdown — a cousin of Markdown.  Can render LaTeX-style
-mathematical text.
+L0 — a markup language with a Lisp-like syntax
 
+Use the three buttons listed under [b Sample docs] to see
+examples of documents written in each of these languages.
 
-The Scripta compiler features real-time, fault-tolerant
-parsing and rendering, and so is suitable for an interactive
-editing system in which (a) changes to the source text
-are rendered "instantly," that is, with no perceptible delay,
-and (b) syntax errors are handled gracefully, marked as such
-in the rendered text, and with the following text rendered
-properly to the greatest extent possible.
+Scripta documents may be exported to standard LaTeX using the 
+[b Export] button or to PDF using the  [b PDF]  button.
+
+There is also a web version of Scripta Desktop at [link scripta.io https://scripta.io].
 
 
 | section 1 -
-Open source
+How to use it
 
-The Scripta compiler is open-source, and can be found at
-[link github.com/jxxcarlson/scripta-compiler  https://github.com/jxxcarlson/scripta-compiler].  In the Example
-folder, you will find a small demo app.  It is hosted online
-at [link Github https://jxxcarlson.github.io/app/scripta-compiler-demo/assets/index.html].
-
-The Scripta compiler is used to power
-[link Scripta.io https://scripta.io].  It features
-interactive editing, a searchable store of documents,
-and facilities for collaboration and web publishing.
-
-
-| section 1 -
-Code
-
-If you are interested in looking at the code, there are two
-good places to start. The first is `compiler/Scripta/API.elm`.
-The second is the folder `compiler/L0/Parser/` especially
-the file `compiler/L0/Parser/Expression`.  The latter
-is the shift-reduce parser used for L0, the simplest
-of the three markup languages considered.
-
-A notable feature of the Scripta compiler is that
-all three markup languages use a common expression
-type and parse to a common type (a list of syntax trees)
-
-|| code
-type Expr
-    = Fun String (List Expr) Meta
-    | Text String Meta
-    | Verbatim String String Meta
-
-The three variants of this type align with the three
-syntactic elements of `L0`:
-
-| item
-Function elements, e.g. `[italic This is italic text]`,
-which are bounded on left and right by brackets.
-
-| item
-Stretches of pure text,
-
-| item
-Verbatim elements, which are bounded by
-dollar signs or by backtics, for inline
-mathematical text and inline code,
-respectively.
-
-
-| section 1 -
-Status and Roadmap
-
-The Scripta compiler is serviceable — I've used to to write
-[link these class notes https://scripta.io/s/jxxcarlson:wave-packets-dispersion], for example.
-That said, there is still a great deal to be done. Please send bug reports,
-feature requests, and comments in general to me at jxxcarlson (gmail).
-I am on the Elm Slack and Github as jxxcarlson and on Twitter as @epsilon2718.
+The best way ... TO BE CONTINUED
 
 """
 
