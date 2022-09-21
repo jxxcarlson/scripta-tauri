@@ -44,8 +44,7 @@ subscriptions model =
 
 
 type alias Model =
-    { input : String
-    , count : Int
+    { count : Int
     , document : Document
     , editRecord : Scripta.API.EditRecord
     , language : Language
@@ -70,7 +69,6 @@ type Msg
     | Render Scripta.API.Msg
     | PDF PDFMsg
     | SetLanguage Language
-    | SetDocument
     | Info
     | Export
     | PrintToPDF
@@ -98,8 +96,7 @@ settings counter =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { input = Text.microLaTeXDemo
-      , count = 0
+    ( { count = 0
       , document = Document.default
       , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.microLaTeXDemo
       , language = MicroLaTeXLang
@@ -160,60 +157,39 @@ update msg model =
 
         InputText str ->
             ( { model
-                | input = str
+                | document = Document.updateContent str model.document
                 , count = model.count + 1
                 , editRecord = Scripta.API.update model.editRecord str
               }
             , Cmd.none
             )
 
-        SetDocument ->
-            ( { model
-                | language = MicroLaTeXLang
-                , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.testFile
-                , input = Text.testFile
-                , count = model.count + 1
-                , documentType = TestDocument
-              }
-            , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
-            )
 
         SetLanguage lang ->
             let
-                docText =
+                doc =
                     case lang of
                         L0Lang ->
-                            Text.l0Demo
+                            { content = Text.l0Demo, name = "demo.L0"}
 
                         MicroLaTeXLang ->
-                            Text.microLaTeXDemo
+                          { content = Text.microLaTeXDemo, name = "demo.tex"}
+                            
 
                         XMarkdownLang ->
-                            Text.xMarkdown
+                          { content = Text.xMarkdown, name = "demo.md"}
+                          
 
                         PlainTextLang ->
-                            ""
+                             { content = Text.nada, name = "nada.L0"}
             in
-            ( { model
-                | language = lang
-                , editRecord = Scripta.API.init Dict.empty lang docText
-                , input = docText
-                , count = model.count + 1
-                , documentType = Example
-              }
-            , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
-            )
+            model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
+            
 
         Info ->
-            ( { model
-                | language = L0Lang
-                , editRecord = Scripta.API.init Dict.empty L0Lang Text.info
-                , input = Text.info
-                , count = model.count + 1
-                , documentType = InfoDocument
-              }
-            , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
-            )
+         model |> loadDocument {content = Text.info, name = "info.L0"} 
+               |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
+            
 
         GetTarFile ->
             let
@@ -341,7 +317,6 @@ controls model =
         , setLanguageButton "MicroLaTeX" model.documentType MicroLaTeXLang model.language
         , setLanguageButton "XMarkdown" model.documentType XMarkdownLang model.language
         , el [ paddingXY 0 40 ] (infoButton model.documentType)
-        , testFileButton model.documentType
         , tarFileButton model
         , printToPDF model
         ]
@@ -376,13 +351,23 @@ inputText model =
  el [ width (px 500),  height (px windowHeight), alignTop, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  scrollbarY] (
     Input.multiline [ width (px 500), height (px windowHeight),  scrollbarY, Font.size 14, alignTop, htmlId "input-text" ]
         { onChange = InputText
-        , text = model.input
+        , text = model.document.content
         , placeholder = Nothing
         , label = Input.labelAbove [ fontGray 0.9 ] <| el [] (text "Source text")
         , spellcheck = False
         }
  )
 
+
+
+-- HELPERS
+
+loadDocument : Document -> Model -> Model
+loadDocument doc model = 
+  { model | document = doc
+          , editRecord = Scripta.API.init Dict.empty ( Document.language doc) doc.content
+          , language = Document.language doc 
+          , count = model.count + 1}
 
 
 -- VIEWPORT
@@ -398,6 +383,8 @@ jumpToTop id =
     Browser.Dom.getViewportOf id
         |> Task.andThen (\info -> Browser.Dom.setViewportOf id 0 0)
         |> Task.attempt (\_ -> NoOp)
+
+
 
 
 
@@ -455,27 +442,6 @@ elementAttribute key value =
     htmlAttribute (Html.Attributes.attribute key value)
 
 
-testFileButton : DocumentType -> Element Msg
-testFileButton documentType =
-    let
-        bgColor =
-            case documentType of
-                InfoDocument ->
-                    gray
-
-                Example ->
-                    gray
-
-                TestDocument ->
-                    darkRed
-    in
-    Button.template
-        { tooltipText = "Load Test file"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
-        , msg = SetDocument
-        , label = "Test Doc"
-        }
 
 
 infoButton : DocumentType -> Element Msg

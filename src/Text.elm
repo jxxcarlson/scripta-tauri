@@ -1,5 +1,11 @@
-module Text exposing (info, l0Demo, microLaTeXDemo, testFile, xMarkdown)
+module Text exposing (info, l0Demo, microLaTeXDemo, testFile, xMarkdown, nada)
 
+nada = """
+| title
+Oops
+
+Sorry, no such document
+"""
 
 info =
     """
