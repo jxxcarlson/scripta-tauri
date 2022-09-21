@@ -45,7 +45,7 @@
       console.log("I want to save", data.name);
       console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
       window.__TAURI__.fs.writeTextFile(
-        { path: data.name, contents: data.content },
+        { path: "scripta/" + data.name, contents: data.content },
         {
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
