@@ -2,12 +2,12 @@
   "build": {
     "beforeBuildCommand": "sh build.sh",
     "beforeDevCommand": "elm make src/Main.elm --output=public/main.js --optimize; npx serve public",
-    "devPath": "../src",
+    "devPath": "http://localhost:4000",
     "distDir": "../out"
   },
   "package": {
     "productName": "scripta-tauri",
-    "version": "0.1.0"
+    "version": "0.1.0" 
   },
   "tauri": {
     "allowlist": {
