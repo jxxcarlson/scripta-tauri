@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 {- This is a starter app which presents a text label, text field, and a button.
    What you enter in the text field is echoed in the label.  When you press the
@@ -42,6 +42,10 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Time.every 180 Tick
 
+{-| 
+    Outbound port
+-}
+port sendDocument : Document -> Cmd a
 
 type alias Model =
     { count : Int
