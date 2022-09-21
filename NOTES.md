@@ -16,7 +16,6 @@ https://kickstartcoding.com/learning-center/articles/building-debug-trainer-desk
 https://itnext.io/from-javascript-to-typescript-to-elm-5c36fca70b4a
 https://elm-ts-interop.com/setup
 https://www.bekk.christmas/post/2020/11/types-without-borders-isn't-enough
-https://thoughtbot.com/blog/bridging-elm-and-javascript-with-ports
 https://socket.dev/npm/package/elm-ts-interop
 https://elm-ts-interop.com/setup/
 https://github.com/halfzebra/create-elm-app
@@ -26,9 +25,16 @@ https://francium.cc/blog/a-few-thoughts-about-elm/
 https://wiki.nikiv.dev/programming-languages/elm/
 
 
+## TAURI
+
 http://mbpfefferle.com/2016/10/14/elm-interop (***)
 https://github.com/kickstartcoding/debug_trainer_app/blob/main/js/app.ts (***)
 import { readTextFile, writeFile } from '@tauri-apps/api/fs'
 Lars Fabian:
 import is actually a javascript (ecmascript 6) thing so it will work in js too, but realistically only with a frontend bundler like vite, webpack (idk if elm needs one too).
 If you don't have a bundler you'd need to use the global tauri api like window.__TAURI__.fs.readTextFile()
+
+## PORTS
+
+https://lengrand.fr/a-short-introduction-to-ports-and-flags-in-elm/
+https://thoughtbot.com/blog/bridging-elm-and-javascript-with-ports

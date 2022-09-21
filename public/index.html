@@ -36,6 +36,10 @@
 
     console.log("pi =", pi)
 
+    app.ports.sendDocument.subscribe(data => {
+    console.log(JSON.stringify(data));
+});
+
 </script>
 
 </body>

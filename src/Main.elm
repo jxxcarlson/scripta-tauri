@@ -81,6 +81,7 @@ type Msg
     | GetTarFile
     | ChangePrintingState PDF.PrintingState
     | ChangeTarFileState PDF.TarFileState
+    | SendDocument
     | Tick Time.Posix
 
 
@@ -260,6 +261,10 @@ update msg model =
 
         Export ->
             ( model, Cmd.none )
+
+       -- PORTS
+        SendDocument -> 
+          ( model, sendDocument model.document)
 
 
 download : String -> String -> Cmd msg
@@ -498,7 +503,7 @@ saveDocumentButton document =
         { tooltipText = "Save current docuemnt"
         , tooltipPlacement = above
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = NoOp
+        , msg = SendDocument
         , label = "Save"
         }
 
