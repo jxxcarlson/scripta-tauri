@@ -19,6 +19,7 @@
 
   <script src="./tauri.js"></script>
 
+
 </head>
 
 <body>
@@ -27,9 +28,13 @@
 
 <script>
 
+    // import {pi} from 'tauri.js'
+
 		var root = document.getElementById('main');
 		var app = Elm.Main.init({node: root, flags:  {  }});
     init(app);
+
+    console.log("pi =", 3.14)
 
 </script>
 

@@ -326,7 +326,7 @@ title : String -> Element msg
 title str =
     row [ centerX, height (px 40), Font.bold, fontGray 0.9 ] [ text str ]
 
-windowHeight = 650
+windowHeight = 750
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
