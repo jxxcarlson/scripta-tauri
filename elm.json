@@ -8,6 +8,7 @@
         "direct": {
             "Chadtech/elm-bool-extra": "2.4.2",
             "Garados007/elm-svg-parser": "1.0.0",
+            "dillonkearns/elm-ts-json": "2.1.1",
             "elm/browser": "1.0.2",
             "elm/core": "1.0.5",
             "elm/file": "1.0.5",
@@ -37,6 +38,7 @@
             "elm/svg": "1.0.1",
             "elm/url": "1.0.0",
             "elm/virtual-dom": "1.0.3",
+            "elm-community/dict-extra": "2.4.0",
             "elm-explorations/test": "1.2.2",
             "justinmimbs/date": "4.0.1",
             "justinmimbs/time-extra": "1.1.1",
