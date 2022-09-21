@@ -39,7 +39,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.app",
+      "identifier": "com.scripta.app",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
