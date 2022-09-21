@@ -6,7 +6,7 @@ scripts:
 
   watch: npx elm-watch hot
    
-  serve: npx serve public
+  serve: npx serve public -l 4000
 
   get-dmg: cp /Users/jxxcarlson/dev/lamdera/bluesky/scripta-tauri/src-tauri/target/release/bundle/dmg/scripta-tauri_0.1.0_x64.dmg .
 
