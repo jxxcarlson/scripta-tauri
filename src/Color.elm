@@ -1,4 +1,5 @@
-module Color exposing (blue, white)
+
+module Color exposing (black , blue, white)
 
 import Element exposing (rgb)
 
@@ -9,3 +10,6 @@ blue =
 
 white =
     rgb 1 1 1
+
+
+black = rgb 0.3 0.3 0.3

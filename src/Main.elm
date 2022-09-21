@@ -72,7 +72,7 @@ type Msg
     | InputText String
     | Render Scripta.API.Msg
     | PDF PDFMsg
-    | SetLanguage Language
+    | SetExampleDocument String
     | Info
     | Export
     | PrintToPDF
@@ -170,22 +170,22 @@ update msg model =
             )
 
 
-        SetLanguage lang ->
+        SetExampleDocument documentName ->
             let
                 doc =
-                    case lang of
-                        L0Lang ->
-                            { content = Text.l0Demo, name = "demo.L0"}
+                    case documentName of
+                        "demo.L0" ->
+                            { content = Text.l0Demo, name = documentName}
 
-                        MicroLaTeXLang ->
-                          { content = Text.microLaTeXDemo, name = "demo.tex"}
+                        "demo.tex" ->
+                          { content = Text.microLaTeXDemo, name = documentName}
                             
 
-                        XMarkdownLang ->
-                          { content = Text.xMarkdown, name = "demo.md"}
+                        "demo.md" ->
+                          { content = Text.xMarkdown, name = documentName}
                           
 
-                        PlainTextLang ->
+                        _ ->
                              { content = Text.nada, name = "nada.L0"}
             in
             model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
@@ -305,8 +305,8 @@ mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
         [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
-            [ --  title "Compiler Demo"
-                row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
+            [   header model
+                ,row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ inputText model
                 , displayRenderedText model
                 , controls model
@@ -318,12 +318,16 @@ mainColumn model =
        ]
 
 
+
+header model = row [paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
+     el [] (text <| "Document: " ++ model.document.name)
+  ]
 controlSpacing = 6
 
 controls model =
     column [ alignTop, spacing 8, paddingXY 16 22, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 120)  ]
         [ 
-          infoButton model.documentType
+           setDocumentButton "about.L0" model.document.name
         , el [paddingXY 0 controlSpacing]  (text "")
         , newFileButton
         , openFileButton
@@ -333,18 +337,16 @@ controls model =
         , printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")
-        , setLanguageButton "L0" model.documentType L0Lang model.language
-        , setLanguageButton "MicroLaTeX" model.documentType MicroLaTeXLang model.language
-        , setLanguageButton "XMarkdown" model.documentType XMarkdownLang model.language
+        , setDocumentButton "demo.L0" model.document.name
+        , setDocumentButton "demo.tex" model.document.name
+        , setDocumentButton "demo.md" model.document.name
        
         ]
 
 
-title : String -> Element msg
-title str =
-    row [ centerX, height (px 40), Font.bold, fontGray 0.9 ] [ text str ]
 
-windowHeight = 750
+
+windowHeight = 700
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
@@ -485,11 +487,11 @@ infoButton documentType =
         }
 
 
-setLanguageButton : String -> DocumentType -> Language -> Language -> Element Msg
-setLanguageButton label documentType language currentLanguage =
+setDocumentButton : String -> String -> Element Msg
+setDocumentButton documentName currentDocumentName =
     let
         bgColor =
-            if language == currentLanguage && documentType == Example then
+            if documentName == currentDocumentName then
                 darkRed
 
             else
@@ -499,8 +501,8 @@ setLanguageButton label documentType language currentLanguage =
         { tooltipText = "Set the markup language"
         , tooltipPlacement = above
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
-        , msg = SetLanguage language
-        , label = label
+        , msg = SetExampleDocument documentName
+        , label = documentName
         }
 
 newFileButton :  Element Msg
