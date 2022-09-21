@@ -37,7 +37,7 @@
     console.log("pi =", pi)
 
     app.ports.sendDocument.subscribe(data => {
-    console.log(JSON.stringify(data));
+    console.log(JSON.stringify(data.name));
 });
 
 </script>

@@ -102,7 +102,7 @@ settings counter =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
-      , document = Document.default
+      , document = { content = Text.microLaTeXDemo, name = "demo.tex"}
       , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.microLaTeXDemo
       , language = MicroLaTeXLang
       , documentType = Example
