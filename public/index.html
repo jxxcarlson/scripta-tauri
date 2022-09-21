@@ -44,15 +44,12 @@
     app.ports.sendDocument.subscribe(data => {
       console.log("I want to save", data.name);
       console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
-      // window.__TAURI__.fs.writeTextFile("foo.txt", "this is a test.\nho ho ho!\n", { dir: window.__TAURI__.fs.BaseDirectory.Desktop });
       window.__TAURI__.fs.writeTextFile(
-        { path: 'foo.txt', contents: "This is a test.\nHo ho ho!\n\n" },
+        { path: data.name, contents: data.content },
         {
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
       )
-      // window.__TAURI__.fs.writeTextFile(window.__TAURI__.fs.$DESKTOP + "/scripta/" + data.name, data.contents);
-      //window.__TAURI__.fs.writeTextFile("scripta/" + data.name, data.contents, { dir: $DESKTOP });
 
     });
 
