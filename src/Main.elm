@@ -40,12 +40,13 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every 40000 Tick
+    Time.every 180 Tick
 
 
 type alias Model =
     { input : String
     , count : Int
+    , document : Document
     , editRecord : Scripta.API.EditRecord
     , language : Language
     , documentType : DocumentType
@@ -99,6 +100,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { input = Text.microLaTeXDemo
       , count = 0
+      , document = Document.default
       , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.microLaTeXDemo
       , language = MicroLaTeXLang
       , documentType = Example
@@ -318,8 +320,8 @@ mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
         [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
-            [  title "Compiler Demo"
-               , row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
+            [ --  title "Compiler Demo"
+                row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ inputText model
                 , displayRenderedText model
                 , controls model
@@ -333,7 +335,9 @@ mainColumn model =
 
 controls model =
     column [ alignTop, spacing 18, paddingXY 16 22, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 120)  ]
-        [ setLanguageButton "L0" model.documentType L0Lang model.language
+        [ saveDocumentButton model.document
+        , el [paddingXY 0 10]  (text "")
+        , setLanguageButton "L0" model.documentType L0Lang model.language
         , setLanguageButton "MicroLaTeX" model.documentType MicroLaTeXLang model.language
         , setLanguageButton "XMarkdown" model.documentType XMarkdownLang model.language
         , el [ paddingXY 0 40 ] (infoButton model.documentType)
@@ -347,7 +351,7 @@ title : String -> Element msg
 title str =
     row [ centerX, height (px 40), Font.bold, fontGray 0.9 ] [ text str ]
 
-windowHeight = 600
+windowHeight = 650
 
 displayRenderedText : Model -> Element Msg
 displayRenderedText model =
@@ -513,6 +517,19 @@ setLanguageButton label documentType language currentLanguage =
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
         , msg = SetLanguage language
         , label = label
+        }
+
+saveDocumentButton : Document -> Element Msg
+saveDocumentButton document =
+    let
+        foo = 1
+    in
+    Button.template
+        { tooltipText = "Save current docuemnt"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = NoOp
+        , label = "Save"
         }
 
 
