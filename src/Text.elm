@@ -45,6 +45,14 @@ How to use it
 
 The best way ... TO BE CONTINUED
 
+| section 1 -
+Technical notes
+
+Scripta Desktop is written in [link Elm https://elm-lang.org], a pure 
+functional language designed for building web apps.  The 
+[link tauri https://tauri.app] framework is used to build the desktop
+version.  The software is open source; please see this [link github repo https://github.com/jxxcarlson/scripta-tauri].  
+
 """
 
 
