@@ -12,6 +12,8 @@ about = """
 
 
 
+
+
 | title
 Scripta Desktop
 
@@ -59,7 +61,7 @@ Get developer account so that dmg files can be signed.  That way Mac users can i
 Add automatic saving of documents.
 
 | numbered
-Add buttons for exporting to LaTeX and PDF.
+Activate the buttons for exporting to LaTeX and PDF.
 
 | numbered 
 Replace the current editor by a better one.
@@ -74,6 +76,8 @@ Scripta Desktop is written in [link Elm https://elm-lang.org], a pure
 functional language designed for building web apps.  The 
 [link tauri https://tauri.app] framework is used to build the desktop
 version.  The software is open source; please see this [link github repo https://github.com/jxxcarlson/scripta-tauri].  
+
+
 
 """
 

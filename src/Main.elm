@@ -433,8 +433,8 @@ controls model =
         , openFileButton
         , saveDocumentButton model.document
         , el [ paddingXY 0 controlSpacing ] (text "")
-       -- , tarFileButton model
-       -- , printToPDF model
+        , tarFileButton model
+        , printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")
         , setDocumentButton "demo.L0" model.document.name
@@ -547,10 +547,10 @@ printToPDF : Model -> Element Msg
 printToPDF model =
     case model.printingState of
         PDF.PrintWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" ] PrintToPDF "PDF"
+            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" ,Background.color Color.paleGray, Font.color Color.black] PrintToPDF "PDF"
 
         PDF.PrintProcessing ->
-            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
+            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
 
         PDF.PrintReady ->
             link
@@ -568,7 +568,7 @@ tarFileButton : Model -> Element Msg
 tarFileButton model =
     case model.tarFileState of
         PDF.TarFileWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File" ] GetTarFile "Export"
+            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File", Background.color Color.paleGray ] GetTarFile "Export"
 
         PDF.TarFileProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
