@@ -433,8 +433,8 @@ controls model =
         , openFileButton
         , saveDocumentButton model.document
         , el [ paddingXY 0 controlSpacing ] (text "")
-        , tarFileButton model
-        , printToPDF model
+       -- , tarFileButton model
+       -- , printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")
         , setDocumentButton "demo.L0" model.document.name
