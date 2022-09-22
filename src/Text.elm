@@ -55,13 +55,14 @@ I plan to get an Apple developer's license to sign the app. Then this nonsense w
 Roadmap
 
 | numbered
-Get developer account so that dmg files can be signed.  That way Mac users can install the app more easily.
+Get developer account so that dmg files can be signed.  That way Mac users can install the app in the usual no-hassle way.
+
+| numbered
+Fix the buttons for exporting to LaTeX and PDF.
 
 | numbered
 Add automatic saving of documents.
 
-| numbered
-Activate the buttons for exporting to LaTeX and PDF.
 
 | numbered 
 Replace the current editor by a better one.
