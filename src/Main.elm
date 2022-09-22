@@ -42,10 +42,15 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Time.every 180 Tick
 
+
+-- PORTS
+
 {-| 
     Outbound port
 -}
 port sendDocument : Document -> Cmd a
+
+port listDirectory : String -> Cmd a
 
 type alias Model =
     { count : Int
@@ -85,6 +90,7 @@ type Msg
     | ChangePrintingState PDF.PrintingState
     | ChangeTarFileState PDF.TarFileState
     | SendDocument
+    | ListDirectory String
     | Tick Time.Posix
     | NewFile
     | InputNewFileName String
@@ -278,6 +284,11 @@ update msg model =
                message = "Document " ++ model.document.name ++ " saved to Desktop/scripta"
             in
             ( {model | message = message }, sendDocument model.document)
+
+        ListDirectory dir -> 
+            ( model , listDirectory dir)
+
+           
 
         NewFile ->
           ({model | popupState = NewDocumentWindowOpen}, Cmd.none)
@@ -618,7 +629,7 @@ openFileButton =
         { tooltipText = "Open docuemnt"
         , tooltipPlacement = above
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = NoOp
+        , msg = ListDirectory "scripta"
         , label = "Open"
         }        
 saveDocumentButton : Document -> Element Msg

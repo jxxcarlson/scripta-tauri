@@ -29,11 +29,6 @@
 <script type="module">
 
     import {pi} from './tauri.js'
-    
-    // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
-    // Read the text file in the `$APPDIR/app.conf` path
-    // const contents = await readTextFile('app.conf', { dir: BaseDirectory.App });
-
 
 		var root = document.getElementById('main');
 		var app = Elm.Main.init({node: root, flags:  {  }});
@@ -53,8 +48,39 @@
 
     });
 
-    const entries =  window.__TAURI__.fs.readDir('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
-    console.log("DIR ENTRIE", entries)
+    // app.ports.listDirectory.subscribe(path => {
+    //    console.log("I want to list", path);
+    //    const entries =  window.__TAURI__.fs.readDir(path, { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
+    //    entries.then(data => console.log("DIR ENTRIES", data))
+
+    // });
+
+    app.ports.listDirectory.subscribe((path) => {
+      window.__TAURI__.dialog.open().then((filepath) => {
+        if (typeof filepath === 'string') {
+          window.__TAURI__.fs.readTextFile(filepath).then((content) => {
+            console.log("CONTENT", content)
+          })
+        } else {
+          alert("Multiple files chosen, but should be only one file!")
+        }
+      })
+
+    });
+
+    // open().then((filepath) => {
+    //     if (typeof filepath === 'string') {
+    //       readTextFile(filepath).then((content) => {
+    //         app.ports.interopToElm.send({
+    //           tag: "gotFileChoice",
+    //           data: { path: filepath, content }
+    //         })
+    //       })
+    //     } else {
+    //       alert("Multiple files chosen, but should be only one file!")
+    //     }
+    //   })
+
 
     // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
     // Read the text file in the `$APPDIR/app.conf` path
