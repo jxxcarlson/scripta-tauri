@@ -50,6 +50,7 @@ port sendDocument : Document -> Cmd a
 type alias Model =
     { count : Int
     , document : Document
+    , newFilename : String
     , editRecord : Scripta.API.EditRecord
     , language : Language
     , documentType : DocumentType
@@ -86,6 +87,8 @@ type Msg
     | SendDocument
     | Tick Time.Posix
     | NewFile
+    | InputNewFileName String
+    | CreateFile
     | ClosePopup
 
 
@@ -116,6 +119,7 @@ init flags =
       , message = "Starting up"
       , ticks = 0
       , popupState = NoPopups
+      , newFilename = ""
       }
     , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
     )
@@ -278,8 +282,16 @@ update msg model =
         NewFile ->
           ({model | popupState = NewDocumentWindowOpen}, Cmd.none)
 
+        InputNewFileName str -> 
+          ({ model | newFilename = str}, Cmd.none)
+
         ClosePopup -> 
            ({model | popupState = NoPopups}, Cmd.none)
+
+        CreateFile -> 
+          {model | popupState = NoPopups} 
+            |> loadDocument { name = model.newFilename, content = "new document"}
+            |> (\m -> (m, Cmd.none))
 
 download : String -> String -> Cmd msg
 download fileName fileContents =
@@ -384,9 +396,12 @@ newDocument model =
                 , moveRight 740
                 , moveUp 720
                 , paddingXY 20 20
+                , spacing 24
                 , width (px 300)
-                , height (px 450) ] [
+                , height (px 220) ] [
             el [] (text "New document")
+            , inputNewFileName model 
+            , createFileButton
             , el [alignBottom] (cancelNewFileButton)
 
             ]
@@ -425,6 +440,16 @@ inputText model =
         }
  )
 
+
+inputNewFileName : Model -> Element Msg
+inputNewFileName model =
+    Input.text [ width (px 170), height (px 30), paddingXY 4 5, Font.size 14, alignTop, Font.color Color.black ]
+        { onChange = InputNewFileName
+        , text = model.newFilename
+        , placeholder = Nothing
+        , label = Input.labelLeft [ fontGray 0.9 ] <| el [] (text "File name ")
+        }
+ 
 
 
 -- HELPERS
@@ -562,6 +587,16 @@ newFileButton  =
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = NewFile
         , label = "New"
+        }
+
+createFileButton :  Element Msg
+createFileButton  =
+    Button.template
+        { tooltipText = "Create new file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = CreateFile
+        , label = "Create"
         }
 
 cancelNewFileButton :  Element Msg
