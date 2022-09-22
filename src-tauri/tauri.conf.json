@@ -29,6 +29,12 @@
         "all": true, 
         "open": true, 
         "save": true
+      },
+      "shell": {
+        "all": true, 
+        "execute": true, 
+        "sidecar": true, 
+        "open": true
       }
     },
     "bundle": {

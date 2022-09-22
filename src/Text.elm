@@ -14,6 +14,8 @@ about = """
 
 
 
+
+
 | title
 Scripta Desktop
 
@@ -44,7 +46,7 @@ Click on [b Save] to save your document.
 | section 1 -
 Bugs
 
-The current version has a few bugs: (1) links don't work; (2) anything else?  Let me know at jxxcarlson, gmail.  I hope to have this fixed shortly.
+The current version has a few bugs: (1) installer issues, see next paragraph; (2) the Export (to LaTeX) and PDF buttons need to be fixed; (3) anything else?  Let me know at jxxcarlson, gmail.  I hope to have this fixed shortly.
 
 [b [i Big issue, temporary:]]  When you download the dmg file to install the app, it will unpack an app that has been "quarantined" by apple.  It is reported as "damaged" but it really isn't.  So do this: (1) put the extracted app in some convenient location llke `~/Downloads`. In the terminal, run `xattr -dr com.apple.quarantine ~/Downloads/scripta-tauri.app`. Now the app will work.
 
@@ -65,7 +67,7 @@ Add automatic saving of documents.
 
 
 | numbered 
-Replace the current editor by a better one.
+Replace the current editor (left window) by a better one, e.g., that used in [link scripta.io https://scripta.io].
 
 | numbered
 Let me know if you find things missing. (jxxcarlson, gmail)
@@ -77,7 +79,6 @@ Scripta Desktop is written in [link Elm https://elm-lang.org], a pure
 functional language designed for building web apps.  The 
 [link tauri https://tauri.app] framework is used to build the desktop
 version.  The software is open source; please see this [link github repo https://github.com/jxxcarlson/scripta-tauri].  
-
 
 
 """
