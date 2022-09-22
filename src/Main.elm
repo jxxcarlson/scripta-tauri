@@ -263,8 +263,12 @@ update msg model =
             ( model, Cmd.none )
 
        -- PORTS
+
         SendDocument -> 
-          ( model, sendDocument model.document)
+            let 
+               message = "Document " ++ model.document.name ++ " saved to Desktop/scripta"
+            in
+            ( {model | message = message }, sendDocument model.document)
 
 
 download : String -> String -> Cmd msg
@@ -311,9 +315,7 @@ mainColumn model =
                 , displayRenderedText model
                 , controls model
                 ]
-            , row [ width (px 1200), Font.color (rgb 1 1 1), height (px 40), Font.size 14]
-                [ text <| model.message
-                ]
+            , footer model
             ]
        ]
 
@@ -322,6 +324,11 @@ mainColumn model =
 header model = row [paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
      el [] (text <| "Document: " ++ model.document.name)
   ]
+
+
+footer model = row [paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
+     el [] (text <| model.message)
+  ]  
 controlSpacing = 6
 
 controls model =
