@@ -10,6 +10,8 @@ Sorry, no such document
 about = """
 
 
+
+
 | title
 Scripta Desktop
 
@@ -19,31 +21,51 @@ Scripta Desktop
 | section 1 -
 What it is
 
-With the Scripta Desktop app you can create and edit documents in any one of three 
-markup languages:
+With the Scripta Desktop app you can create and edit documents in any one of three markup languages: (1) [i MIcroLaTeX] — like LaTeX; (2) [i XMarkdown] — like Markdown, can do LaTeX-style math equations; (3) [i L0], a markdup language with a Lisp-like syntax.  For a web version
+of this app, see [link scripta.io https://scripta.io].
 
-| item
-MicroLaTeX — like LaTeX
+| section 1 -
+Getting started
 
-| item
-XMarkdown — like  Markdown, but you can do LaTeX-style mathematics
+| numbered
+Make a directory called [i scripta] on the Desktop. This is where new documents will be created.
 
-| item
-L0 — a markup language with a Lisp-like syntax
+| numbered
+Click on the [b New] button to create a new document.  Be sure to choose the correct file extension, e.g. `foo.tex` for MicroLaTeX, `foo.md` for XMarkdown, `foo.L0` for an L0 document.
 
-Use the three buttons listed under [b Sample docs] to see
-examples of documents written in each of these languages.
+| numbered
+Click on [b Save] to save your document.
 
-Scripta documents may be exported to standard LaTeX using the 
-[b Export] button or to PDF using the  [b PDF]  button.
-
-There is also a web version of Scripta Desktop at [link scripta.io https://scripta.io].
+[i [b Note & Tip.]] Use the three buttons listed under [i [b Sample docs]] to see examples of documents written in each of these languages.  Compare the source and rendered text to see what you can do in Scripta.  You can edit these documents, but your edits will not be saved.  Good way to experiment.
 
 
 | section 1 -
-How to use it
+Bugs
 
-The best way ... TO BE CONTINUED
+The current version has a few bugs: (1) links don't work; (2) anything else?  Let me know at jxxcarlson, gmail.  I hope to have this fixed shortly.
+
+[b [i Big issue, temporary:]]  When you download the dmg file to install the app, it will unpack an app that has been "quarantined" by apple.  It is reported as "damaged" but it really isn't.  So do this: (1) put the extracted app in some convenient location llke `~/Downloads`. In the terminal, run `xattr -dr com.apple.quarantine ~/Downloads/scripta-tauri.app`. Now the app will work.
+
+I plan to get an Apple developer's license to sign the app. Then this nonsense will not be necessary.
+
+
+| section 1 -
+Roadmap
+
+| numbered
+Get developer account so that dmg files can be signed.  That way Mac users can install the app more easily.
+
+| numbered
+Add automatic saving of documents.
+
+| numbered
+Add buttons for exporting to LaTeX and PDF.
+
+| numbered 
+Replace the current editor by a better one.
+
+| numbered
+Let me know if you find things missing. (jxxcarlson, gmail)
 
 | section 1 -
 Technical notes
