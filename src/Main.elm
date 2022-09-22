@@ -20,6 +20,8 @@ import File.Download
 import Html exposing (Html)
 import Html.Attributes
 import Http
+import Json.Encode
+import Json.Decode
 import PDF exposing (PDFMsg(..))
 import Scripta.API
 import Scripta.Language exposing (Language(..))
@@ -27,6 +29,8 @@ import Document exposing(Document)
 import Task
 import Text
 import Time
+import List.Extra
+import Browser.Navigation exposing (load)
 
 
 main =
@@ -40,17 +44,26 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every 180 Tick
+    Sub.batch [
+        Time.every 180 Tick
+        , receiveDocument (Json.Decode.decodeValue documentDecoder >> DocumentReceived)
+    ]
 
 
--- PORTS
-
-{-| 
-    Outbound port
--}
+-- PORTS, OUTBOUND
 port sendDocument : Document -> Cmd a
 
 port listDirectory : String -> Cmd a
+
+-- PORTS, INBOUND
+port receiveDocument : (Json.Encode.Value -> msg) -> Sub msg
+
+documentDecoder : Json.Decode.Decoder Document
+documentDecoder =
+    Json.Decode.map2 Document 
+      (Json.Decode.field "content" Json.Decode.string)
+      (Json.Decode.field "name" Json.Decode.string)
+
 
 type alias Model =
     { count : Int
@@ -91,6 +104,7 @@ type Msg
     | ChangeTarFileState PDF.TarFileState
     | SendDocument
     | ListDirectory String
+    | DocumentReceived (Result Json.Decode.Error Document)
     | Tick Time.Posix
     | NewFile
     | InputNewFileName String
@@ -303,6 +317,21 @@ update msg model =
           {model | popupState = NoPopups} 
             |> loadDocument { name = model.newFilename, content = "new document"}
             |> (\m -> (m, Cmd.none))
+
+        DocumentReceived result ->
+         case result of 
+           Err _ -> ({ model | message = "Error opening document"}, Cmd.none)
+           Ok doc -> 
+              case List.Extra.unconsLast (doc.name |> String.split "/") of 
+                    Nothing -> ({ model | message = "Error opening document"}, Cmd.none)
+                    Just (name_, _) -> 
+                       {model | message = "Document opened"} 
+                       |> loadDocument {doc | name = name_}
+                       |> (\m -> (m, Cmd.none))
+                    
+            
+             
+            
 
 download : String -> String -> Cmd msg
 download fileName fileContents =
