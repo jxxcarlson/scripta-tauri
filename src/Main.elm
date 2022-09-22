@@ -46,10 +46,16 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch [
-        Time.every 180 Tick
+        Time.every 2000 Tick
+        , Time.every 3000 DocumentSaveTick
         , receiveDocument (Json.Decode.decodeValue documentDecoder >> DocumentReceived)
     ]
 
+autosave model = 
+  if model.documentNeedsSaving  then
+     ({model | documentNeedsSaving = False }, sendDocument model.document)
+  else
+     (model, Cmd.none)
 
 -- PORTS, OUTBOUND
 port sendDocument : Document -> Cmd a
@@ -70,6 +76,7 @@ documentDecoder =
 type alias Model =
     { count : Int
     , document : Document
+    , documentNeedsSaving: Bool
     , newFilename : String
     , editRecord : Scripta.API.EditRecord
     , language : Language
@@ -107,6 +114,7 @@ type Msg
     | ListDirectory String
     | DocumentReceived (Result Json.Decode.Error Document)
     | Tick Time.Posix
+    | DocumentSaveTick Time.Posix
     | NewFile
     | InputNewFileName String
     | CreateFile
@@ -131,6 +139,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
+      , documentNeedsSaving = False
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
       , language = L0Lang
       , currentTime = Time.millisToPosix 0
@@ -151,8 +160,12 @@ update msg model =
         NoOp ->
             ( model, Cmd.none )
 
+        DocumentSaveTick _ -> 
+          autosave model
+
         Tick newTime ->
             let
+                
                 printingState =
                     if model.printingState == PDF.PrintProcessing && model.ticks > 2 then
                         PDF.PrintReady
@@ -180,20 +193,19 @@ update msg model =
                     else
                         model.ticks + 1
             in
-            ( { model
+            ({ model
                 | currentTime = newTime
                 , ticks = ticks
                 , tarFileState = tarFileState
                 , printingState = printingState
-              }
-            , Cmd.none
-            )
+              } , Cmd.none)
 
         InputText str ->
             ( { model
                 | document = Document.updateContent str model.document
                 , count = model.count + 1
                 , editRecord = Scripta.API.update model.editRecord str
+                , documentNeedsSaving = True
               }
             , Cmd.none
             )
@@ -303,9 +315,9 @@ update msg model =
                           else "Saved as Desktop/" ++ model.document.path
             in
             if model.document.path == "NONE" then
-              ({model | message = message} , Cmd.none)
+              ({model | message = message, documentNeedsSaving = False} , Cmd.none)
             else
-              ( {model | message = message }, sendDocument model.document)
+              ( {model | message = message, documentNeedsSaving = False }, sendDocument model.document)
 
         ListDirectory dir -> 
             ( model , listDirectory dir)
@@ -414,8 +426,20 @@ header model = row [paddingXY 20 0
 
 footer model = row [ inFront (newDocument model), paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [ 
         el [] (text <| "Words: " ++ (String.words model.document.content |> List.length |> String.fromInt))
+     ,  documentNeedsSavingIndicator model.documentNeedsSaving
      ,  el [] (text <| model.message)
-  ]  
+  ]
+
+
+indicatorSize = 8
+
+documentNeedsSavingIndicator : Bool -> Element Msg
+documentNeedsSavingIndicator needsSaving = 
+  if needsSaving  then 
+     el [width (px indicatorSize), height (px indicatorSize), Background.color Color.red] (text "")
+  else 
+     el [width (px indicatorSize), height (px indicatorSize), Background.color Color.green] (text "")
+
 controlSpacing = 6
 
 controls model =
@@ -513,6 +537,7 @@ inputNewFileName model =
 loadDocument : Document -> Model -> Model
 loadDocument doc model = 
   { model | document = doc
+          , documentNeedsSaving = False
           , editRecord = Scripta.API.init Dict.empty ( Document.language doc) doc.content
           , language = Document.language doc 
           , count = model.count + 1}
