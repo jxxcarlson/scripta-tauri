@@ -3,7 +3,10 @@ module Document exposing (Document, default, updateContent, language)
 import Scripta.Language exposing (Language(..))
 import List.Extra
 
-type alias Document = { content : String, name : String}
+type alias Document = { content : String
+                      , name : String
+                      , path : String
+                      }
 
 language : Document -> Language
 language doc = 

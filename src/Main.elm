@@ -60,9 +60,10 @@ port receiveDocument : (Json.Encode.Value -> msg) -> Sub msg
 
 documentDecoder : Json.Decode.Decoder Document
 documentDecoder =
-    Json.Decode.map2 Document 
+    Json.Decode.map3 Document 
       (Json.Decode.field "content" Json.Decode.string)
       (Json.Decode.field "name" Json.Decode.string)
+      (Json.Decode.field "path" Json.Decode.string)
 
 
 type alias Model =
@@ -129,7 +130,7 @@ settings counter =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
-      , document = { content = Text.about, name = "about.L0"}
+      , document = { content = Text.about, name = "about.L0", path = "NONE"}
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
       , language = L0Lang
       , documentType = Example
@@ -204,24 +205,27 @@ update msg model =
                 doc =
                     case documentName of
                         "demo.L0" ->
-                            { content = Text.l0Demo, name = documentName}
+                            { content = Text.l0Demo, name = documentName, path = "NONE"}
 
                         "demo.tex" ->
-                          { content = Text.microLaTeXDemo, name = documentName}
+                          { content = Text.microLaTeXDemo, name = documentName,  path = "NONE"}
                             
 
                         "demo.md" ->
-                          { content = Text.xMarkdown, name = documentName}
+                          { content = Text.xMarkdown, name = documentName, path = "NONE"}
+
+                        "about.L0" ->
+                          { content = Text.about, name = documentName, path = "NONE"}
                           
 
                         _ ->
-                             { content = Text.nada, name = "nada.L0"}
+                             { content = Text.nada, name = "nada.L0",  path = "NONE"}
             in
             model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
             
 
         Info ->
-         model |> loadDocument {content = Text.about, name = "info.L0"} 
+         model |> loadDocument {content = Text.about, name = "about.L0",  path = "NONE"} 
                |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
             
 
@@ -295,9 +299,14 @@ update msg model =
 
         SendDocument -> 
             let 
-               message = "Document " ++ model.document.name ++ " saved to Desktop/scripta"
+               message =  if model.document.path == "NONE" then
+                             "Document is read-only"
+                          else "Saved as Desktop/" ++ model.document.path
             in
-            ( {model | message = message }, sendDocument model.document)
+            if model.document.path == "NONE" then
+              ({model | message = message} , Cmd.none)
+            else
+              ( {model | message = message }, sendDocument model.document)
 
         ListDirectory dir -> 
             ( model , listDirectory dir)
@@ -315,7 +324,7 @@ update msg model =
 
         CreateFile -> 
           {model | popupState = NoPopups} 
-            |> loadDocument { name = model.newFilename, content = "new document"}
+            |> loadDocument { name = model.newFilename, content = "new document\n", path = "scripta/" ++ model.newFilename}
             |> (\m -> (m, Cmd.none))
 
         DocumentReceived result ->
@@ -326,12 +335,19 @@ update msg model =
                     Nothing -> ({ model | message = "Error opening document"}, Cmd.none)
                     Just (name_, _) -> 
                        {model | message = "Document opened"} 
-                       |> loadDocument {doc | name = name_}
+                       |> loadDocument {doc | name = name_, path = fixPath doc.path}
                        |> (\m -> (m, Cmd.none))
                     
             
              
             
+fixPath : String -> String
+fixPath str = 
+   str 
+     |> String.split "/"
+     |> List.Extra.dropWhile (\s -> s /= "Desktop")
+     |> List.drop 1
+     |> String.join "/"
 
 download : String -> String -> Cmd msg
 download fileName fileContents =

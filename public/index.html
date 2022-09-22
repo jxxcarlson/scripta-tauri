@@ -40,7 +40,7 @@
       console.log("I want to save", data.name);
       console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
       window.__TAURI__.fs.writeTextFile(
-        { path: "scripta/" + data.name, contents: data.content },
+        { path: data.path, contents: data.content },
         {
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
@@ -61,7 +61,7 @@
           window.__TAURI__.fs.readTextFile(filepath).then((content) => {
             console.log("FILEPATH", filepath)
             console.log("CONTENT", content)
-            app.ports.receiveDocument.send({name: filepath, content: content});
+            app.ports.receiveDocument.send({name: filepath, path: filepath, content: content});
           })
         } else {
           alert("Multiple files chosen, but should be only one file!")
