@@ -31,6 +31,7 @@ import Text
 import Time
 import List.Extra
 import Browser.Navigation exposing (load)
+import String exposing (toInt)
 
 
 main =
@@ -72,7 +73,6 @@ type alias Model =
     , newFilename : String
     , editRecord : Scripta.API.EditRecord
     , language : Language
-    , documentType : DocumentType
     , currentTime : Time.Posix
     , printingState : PDF.PrintingState
     , tarFileState : PDF.TarFileState
@@ -133,7 +133,6 @@ init flags =
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
       , language = L0Lang
-      , documentType = Example
       , currentTime = Time.millisToPosix 0
       , printingState = PDF.PrintWaiting
       , tarFileState = PDF.TarFileWaiting
@@ -413,8 +412,9 @@ header model = row [paddingXY 20 0
   ]
 
 
-footer model = row [ inFront (newDocument model), paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
-     el [] (text <| model.message)
+footer model = row [ inFront (newDocument model), paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [ 
+        el [] (text <| "Words: " ++ (String.words model.document.content |> List.length |> String.fromInt))
+     ,  el [] (text <| model.message)
   ]  
 controlSpacing = 6
 
@@ -588,31 +588,6 @@ tarFileButton model =
 elementAttribute : String -> String -> Attribute msg
 elementAttribute key value =
     htmlAttribute (Html.Attributes.attribute key value)
-
-
-
-
-infoButton : DocumentType -> Element Msg
-infoButton documentType =
-    let
-        bgColor =
-            case documentType of
-                InfoDocument ->
-                    darkRed
-
-                Example ->
-                    gray
-
-                TestDocument ->
-                    gray
-    in
-    Button.template
-        { tooltipText = "Info on the Scripta compiler"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
-        , msg = Info
-        , label = "About"
-        }
 
 
 
