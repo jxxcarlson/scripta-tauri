@@ -26,7 +26,7 @@ markup languages:
 MicroLaTeX — like LaTeX
 
 | item
-XMarkdown — like Markdown, but you can do LaTeX-style mathematics
+XMarkdown — like  Markdown, but you can do LaTeX-style mathematics
 
 | item
 L0 — a markup language with a Lisp-like syntax

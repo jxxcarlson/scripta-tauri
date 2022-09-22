@@ -58,8 +58,10 @@ type alias Model =
     , tarFileState : PDF.TarFileState
     , message : String
     , ticks : Int
+    , popupState : PopupState
     }
 
+type PopupState = NewDocumentWindowOpen | NoPopups
 
 type DocumentType
     = InfoDocument
@@ -83,6 +85,8 @@ type Msg
     | ChangeTarFileState PDF.TarFileState
     | SendDocument
     | Tick Time.Posix
+    | NewFile
+    | ClosePopup
 
 
 type alias Flags =
@@ -111,6 +115,7 @@ init flags =
       , tarFileState = PDF.TarFileWaiting
       , message = "Starting up"
       , ticks = 0
+      , popupState = NoPopups
       }
     , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
     )
@@ -270,6 +275,11 @@ update msg model =
             in
             ( {model | message = message }, sendDocument model.document)
 
+        NewFile ->
+          ({model | popupState = NewDocumentWindowOpen}, Cmd.none)
+
+        ClosePopup -> 
+           ({model | popupState = NoPopups}, Cmd.none)
 
 download : String -> String -> Cmd msg
 download fileName fileContents =
@@ -308,7 +318,7 @@ view model =
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
+        [ column [  spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
             [   header model
                 ,row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ inputText model
@@ -321,18 +331,33 @@ mainColumn model =
 
 
 
-header model = row [paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
+header model = row [paddingXY 20 0
+    , spacing 18
+    , width fill
+    , height (px 40)
+    , Font.size 14
+    , Background.color Color.black
+    , Font.color Color.white
+   
+    ]  
+  [
      el [] (text <| "Document: " ++ model.document.name)
   ]
 
 
-footer model = row [paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
+footer model = row [ inFront (newDocument model), paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white]  [
      el [] (text <| model.message)
   ]  
 controlSpacing = 6
 
 controls model =
-    column [ alignTop, spacing 8, paddingXY 16 22, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 120)  ]
+    column [ alignTop
+           , spacing 8
+           , paddingXY 16 22
+           , height fill
+           , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
+           , scrollbarY
+           , width (px 120)  ]
         [ 
            setDocumentButton "about.L0" model.document.name
         , el [paddingXY 0 controlSpacing]  (text "")
@@ -351,7 +376,22 @@ controls model =
         ]
 
 
+newDocument model = 
+  case model.popupState of 
+     NewDocumentWindowOpen -> 
+        column [  Background.color Color.jetBlack
+                , Font.color Color.white
+                , moveRight 740
+                , moveUp 720
+                , paddingXY 20 20
+                , width (px 300)
+                , height (px 450) ] [
+            el [] (text "New document")
+            , el [alignBottom] (cancelNewFileButton)
 
+            ]
+
+     _ -> Element.none
 
 windowHeight = 700
 
@@ -494,6 +534,8 @@ infoButton documentType =
         }
 
 
+
+
 setDocumentButton : String -> String -> Element Msg
 setDocumentButton documentName currentDocumentName =
     let
@@ -514,15 +556,22 @@ setDocumentButton documentName currentDocumentName =
 
 newFileButton :  Element Msg
 newFileButton  =
-    let
-        foo = 1
-    in
     Button.template
-        { tooltipText = "Open file"
+        { tooltipText = "Make new file"
         , tooltipPlacement = above
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = NoOp
+        , msg = NewFile
         , label = "New"
+        }
+
+cancelNewFileButton :  Element Msg
+cancelNewFileButton  =
+    Button.template
+        { tooltipText = "Cancel new file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = ClosePopup
+        , label = "Cancel"
         }
 
 openFileButton : Element Msg

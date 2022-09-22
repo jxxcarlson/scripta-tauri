@@ -1,5 +1,5 @@
 
-module Color exposing (black , blue, white)
+module Color exposing (black ,jetBlack, blue, white)
 
 import Element exposing (rgb)
 
@@ -13,3 +13,5 @@ white =
 
 
 black = rgb 0.3 0.3 0.3
+
+jetBlack = rgb 0.0 0.0 0.0
