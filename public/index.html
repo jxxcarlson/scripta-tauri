@@ -53,6 +53,26 @@
 
     });
 
+    const entries =  window.__TAURI__.fs.readDir('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
+    console.log("DIR ENTRIE", entries)
+
+    // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+    // Read the text file in the `$APPDIR/app.conf` path
+    // const contents = await readTextFile('app.conf', { dir: BaseDirectory.App });
+
+    // import { readDir, BaseDirectory } from '@tauri-apps/api/fs';
+    // // Reads the `$APPDIR/users` directory recursively
+    // const entries = await readDir('users', { dir: BaseDirectory.App, recursive: true });
+
+    // function processEntries(entries) {
+    //   for (const entry of entries) {
+    //     console.log(`Entry: ${entry.path}`);
+    //     if (entry.children) {
+    //       processEntries(entry.children)
+    //     }
+    //   }
+    // }
+
 </script>
 
 </body>
