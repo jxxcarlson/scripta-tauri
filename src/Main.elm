@@ -46,7 +46,7 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch [
-        Time.every 2000 Tick
+        Time.every 500 ExportTick
         , Time.every 3000 DocumentSaveTick
         , receiveDocument (Json.Decode.decodeValue documentDecoder >> DocumentReceived)
     ]
@@ -113,7 +113,7 @@ type Msg
     | SendDocument
     | ListDirectory String
     | DocumentReceived (Result Json.Decode.Error Document)
-    | Tick Time.Posix
+    | ExportTick Time.Posix
     | DocumentSaveTick Time.Posix
     | NewFile
     | InputNewFileName String
@@ -163,7 +163,7 @@ update msg model =
         DocumentSaveTick _ -> 
           autosave model
 
-        Tick newTime ->
+        ExportTick newTime ->
             let
                 
                 printingState =
@@ -572,7 +572,7 @@ printToPDF : Model -> Element Msg
 printToPDF model =
     case model.printingState of
         PDF.PrintWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" ,Background.color Color.paleGray, Font.color Color.black] PrintToPDF "PDF"
+            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" , Font.color Color.black] PrintToPDF "PDF"
 
         PDF.PrintProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
@@ -593,7 +593,7 @@ tarFileButton : Model -> Element Msg
 tarFileButton model =
     case model.tarFileState of
         PDF.TarFileWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File", Background.color Color.paleGray ] GetTarFile "Export"
+            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File" ] GetTarFile "Export"
 
         PDF.TarFileProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
