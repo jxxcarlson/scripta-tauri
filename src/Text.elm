@@ -15,18 +15,21 @@ Scripta Desktop
 | contents
 
 
-$$
-\\int_0^1 x^n dx = \\frac{1}{n+1}
-$$
-
 | section 1 -
 What it is
 
-With the Scripta Desktop app you can create and edit documents in any one of three markup languages: (1) [i MicroLaTeX] — like LaTeX; (2) [i XMarkdown] — like Markdown, can do LaTeX-style math equations; (3) [i L0], a markdup language with a Lisp-like syntax.  For a web version
-of this app, see [link scripta.io https://scripta.io].
+With the Scripta Desktop app you can create and edit documents in any one of three markup languages: (1) [i MicroLaTeX] — like LaTeX; (2) [i XMarkdown] — like Markdown, but  can also do LaTeX-style math equations; (3) [i L0], a markup language with a Lisp-like syntax.  For a web version of this app, see [link scripta.io https://scripta.io].
+
+Documents created with Scripta Desktop can be exported to LaTeX or PDF.
 
 | section 1 -
 Getting started
+
+
+For the moment, these instructions apply to Mac OS.  PC and Linux users can clone the [link GitHub repository git@github.com:jxxcarlson/scripta-tauri.git] and build from source.
+
+| numbered
+Download and run the installer from XXX.
 
 | numbered
 Make a directory called [i scripta] on the Desktop. This is where new documents will be created.
@@ -34,33 +37,26 @@ Make a directory called [i scripta] on the Desktop. This is where new documents 
 | numbered
 Click on the [b New] button to create a new document.  Be sure to choose the correct file extension, e.g. `foo.tex` for MicroLaTeX, `foo.md` for XMarkdown, `foo.L0` for an L0 document.
 
-| numberedautor
-If you want to, click on [b Save] to save your document. However, documents are saved automatically every 3 seconds.
+| numbered
+If you  want to, click on [b Save] to save your document. However, documents are saved automatically every 3 seconds.
 
-[i [b Note & Tip.]] Use the three buttons listed under [i [b Sample docs]] to see examples of documents written in each of these languages.  Compare the source and rendered text to see what you can do in Scripta.  You can edit these documents, but your edits will not be saved.  Good way to experiment.
+[i [b Note & Tip.]] Use the three buttons listed under [i [b Sample docs]] to see examples of documents written in each of these languages.  Compare the source and rendered text to see what you can do in Scripta.  You can edit these documents, but your edits will not be saved.  
 
 
 | section 1 -
 Bugs
 
-The current version has a few bugs: (1) installer issues, see next paragraph; (2) the Export (to LaTeX) and PDF buttons need to be fixed; (3) anything else?  Let me know at jxxcarlson, gmail.  I hope to have this fixed shortly.
+[b [i Downloading the installer.]]
+I need to figure out how to sign the Scripta Desktop installer.  It won't work until I do that.
 
-[b [i Big issue, temporary:]]  When you download the dmg file to install the app, it will unpack an app that has been "quarantined" by apple.  It is reported as "damaged" but it really isn't.  So do this: (1) put the extracted app in some convenient location llke `~/Downloads`. In the terminal, run `xattr -dr com.apple.quarantine ~/Downloads/scripta-tauri.app`. Now the app will work.
-
-I plan to get an Apple developer's license to sign the app. Then this nonsense will not be necessary.
+[b [i Other bugs?  Suggestions.]] Let me know at jxxcarlson, gmail.  
 
 
 | section 1 -
 Roadmap
 
-| numbered
-Get developer account so that dmg files can be signed.  That way Mac users can install the app in the usual no-hassle way.
-
-| numbered
-Fix the buttons for exporting to LaTeX and PDF.
-
 | numbered 
-Replace the current editor (left window) by a better one, e.g., that used in [link scripta.io https://scripta.io].
+Replace the current editor (left window) by a better one, e.g., the one used in [link scripta.io https://scripta.io].
 
 | numbered
 Let me know if you find things missing. (jxxcarlson, gmail)
@@ -72,7 +68,6 @@ Scripta Desktop is written in [link Elm https://elm-lang.org], a pure
 functional language designed for building web apps.  The 
 [link tauri https://tauri.app] framework is used to build the desktop
 version.  The software is open source; please see this [link github repo https://github.com/jxxcarlson/scripta-tauri].  
-
 
 
 """
