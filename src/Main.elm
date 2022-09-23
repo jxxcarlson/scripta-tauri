@@ -102,7 +102,6 @@ type Msg
     | Render Scripta.API.Msg
     | PDF PDFMsg
     | SetExampleDocument String
-    | Info
     | Export
     | PrintToPDF
     | GotPdfLink (Result Http.Error String)
@@ -233,12 +232,7 @@ update msg model =
                              { content = Text.nada, name = "nada.L0",  path = "NONE"}
             in
             model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
-            
-
-        Info ->
-         model |> loadDocument {content = Text.about, name = "about.L0",  path = "NONE"} 
-               |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
-            
+               
 
         GetTarFile ->
             let
@@ -451,7 +445,7 @@ controls model =
            , scrollbarY
            , width (px 120)  ]
         [ 
-           setDocumentButton "about.L0" model.document.name
+           setDocumentButton "About" "about.L0" model.document.name
         , el [paddingXY 0 controlSpacing]  (text "")
         , newFileButton
         , openFileButton
@@ -461,9 +455,9 @@ controls model =
         , printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")
-        , setDocumentButton "demo.L0" model.document.name
-        , setDocumentButton "demo.tex" model.document.name
-        , setDocumentButton "demo.md" model.document.name
+        , setDocumentButton "L0" "demo.L0" model.document.name
+        , setDocumentButton "MicroLaTeX" "demo.tex" model.document.name
+        , setDocumentButton "XMarkdown" "demo.md" model.document.name
        
         ]
 
@@ -615,10 +609,7 @@ elementAttribute key value =
     htmlAttribute (Html.Attributes.attribute key value)
 
 
-
-
-setDocumentButton : String -> String -> Element Msg
-setDocumentButton documentName currentDocumentName =
+setDocumentButton labelName documentName currentDocumentName =
     let
         bgColor =
             if documentName == currentDocumentName then
@@ -632,7 +623,7 @@ setDocumentButton documentName currentDocumentName =
         , tooltipPlacement = above
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
         , msg = SetExampleDocument documentName
-        , label = documentName
+        , label = labelName
         }
 
 newFileButton :  Element Msg

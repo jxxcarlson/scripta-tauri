@@ -18,7 +18,9 @@ Scripta Desktop
 | section 1 -
 What it is
 
-With the Scripta Desktop app you can create and edit documents in any one of three markup languages: (1) [i MicroLaTeX] — like LaTeX; (2) [i XMarkdown] — like Markdown, but  can also do LaTeX-style math equations; (3) [i L0], a markup language with a Lisp-like syntax.  For a web version of this app, see [link scripta.io https://scripta.io].
+With the Scripta Desktop app you can create and edit documents in any one of three markup languages: 
+
+(1) [i MicroLaTeX] — like LaTeX; (2) [i XMarkdown] — like Markdown, but  can also do LaTeX-style math equations; (3) [i L0], a markup language with a Lisp-like syntax.  For a web version of this app, see [link scripta.io https://scripta.io].
 
 Documents created with Scripta Desktop can be exported to LaTeX or PDF.
 
