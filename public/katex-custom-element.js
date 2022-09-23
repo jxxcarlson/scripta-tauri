@@ -4,11 +4,7 @@ const init =  async function(app) {
   var katexJs = document.createElement('script')
   katexJs.type = 'text/javascript'
   katexJs.onload = initKatex
-  //katexJs.src = "http://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
   katexJs.src = "katex.min.js"
-
-  //   katexJs.src = "http://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js"
-
   document.head.appendChild(katexJs);
   console.log("elm-katex: I have appended katexJs to document.head");
 
@@ -34,7 +30,6 @@ function initKatex() {
         );
       let link = document.createElement('link');
       link.setAttribute('rel', 'stylesheet');
-      // link.setAttribute('href', 'https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css');
       link.setAttribute('href', 'katex.min.css');
       this.shadowRoot.appendChild(link);
 
