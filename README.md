@@ -1,6 +1,8 @@
 # Scripta-Tauri
 
-A desktop app hosting the Scripta compiler.
+A desktop app hosting the Scripta compiler 
+(real-time compilation of source text in MicroLaTeX, XMarkdow or L0
+to HTML)
 
 See https://scripta.io for the web app.
 
