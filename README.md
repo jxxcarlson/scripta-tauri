@@ -1,8 +1,8 @@
 # Scripta-Tauri
 
-A desktop app hosting the Scripta compiler
+A desktop app hosting the Scripta compiler.
 
-See https://scripta.io for the web app
+See https://scripta.io for the web app.
 
 As soon as I can figure out how to sign .dmg files, 
 I will post installers for x86 and Apple Silicon binaries
