@@ -1,40 +1,154 @@
-module Button exposing (ButtonData, simpleTemplate, template)
+module Button exposing (
+            printToPDF
+            , tarFile
+            , setDocument
+            , newFile
+            , createFile
+            , cancelNewFile
+            , openFile
+            , saveDocument
+      )
 
+import ButtonTemplate
 import Element exposing (..)
-import Element.Background as Background
-import Element.Border as Border
+import Model exposing(Model, Msg(..))
+import PDF
+import Scripta.API
 import Element.Font as Font
-import Element.Input as Input
+import Document exposing(Document)
+import Element.Background as Background
+import Element.Events
+import Color
 import Html.Attributes
 
-
-template : ButtonData msg -> Element msg
-template buttonData =
-    row ([ bgGray 0.2, pointer, mouseDown [ Background.color darkRed ] ] ++ buttonData.attributes)
-        [ Input.button buttonStyle
-            { onPress = Just buttonData.msg
-            , label = addTooltip buttonData.tooltipPlacement buttonData.tooltipText (el [ centerX, centerY, Font.size 14 ] (text buttonData.label))
-            }
-        ]
+-- BUTTONS
 
 
-simpleTemplate : List (Attribute msg) -> msg -> String -> Element msg
-simpleTemplate attrList msg label_ =
-    row ([ bgGray 0.2, pointer, mouseDown [ Background.color darkRed ] ] ++ attrList)
-        [ Input.button buttonStyle
-            { onPress = Just msg
-            , label = el [ centerX, centerY, Font.size 14 ] (text label_)
-            }
-        ]
+buttonWidth =
+    105
 
 
-type alias ButtonData msg =
-    { tooltipText : String
-    , tooltipPlacement : Element msg -> Attribute msg
-    , attributes : List (Attribute msg)
-    , msg : msg
-    , label : String
-    }
+printToPDF : Model -> Element Msg
+printToPDF model =
+    case model.printingState of
+        PDF.PrintWaiting ->
+            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" , Font.color Color.black] PrintToPDF "PDF"
+
+        PDF.PrintProcessing ->
+            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
+
+        PDF.PrintReady ->
+            link
+                [ Font.size 14
+                , Background.color Color.white
+                , paddingXY 8 8
+                , Font.color Color.blue
+                , Element.Events.onClick (ChangePrintingState PDF.PrintWaiting)
+                , elementAttribute "target" "_blank"
+                ]
+                { url = PDF.pdfServUrl ++ Scripta.API.fileNameForExport model.editRecord.tree, label = el [] (text "Click for PDF") }
+
+
+tarFile : Model -> Element Msg
+tarFile model =
+    case model.tarFileState of
+        PDF.TarFileWaiting ->
+            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File" ] GetTarFile "Export"
+
+        PDF.TarFileProcessing ->
+            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
+
+        PDF.TarFileReady ->
+            link
+                [ Font.size 14
+                , Background.color Color.white
+                , paddingXY 8 8
+                , Font.color Color.blue
+                , Element.Events.onClick (ChangeTarFileState PDF.TarFileProcessing)
+                , elementAttribute "target" "_blank"
+                ]
+                { url = PDF.tarArchiveUrl ++ (Scripta.API.fileNameForExport model.editRecord.tree |> String.replace ".tex" ".tar"), label = el [] (text "Click for Tar file") }
+
+
+elementAttribute : String -> String -> Attribute msg
+elementAttribute key value =
+    htmlAttribute (Html.Attributes.attribute key value)
+
+
+setDocument labelName documentName currentDocumentName =
+    let
+        bgColor =
+            if documentName == currentDocumentName then
+                darkRed
+
+            else
+                gray
+    in
+    ButtonTemplate.template
+        { tooltipText = "Set the markup language"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
+        , msg = SetExampleDocument documentName
+        , label = labelName
+        }
+
+newFile :  Element Msg
+newFile  =
+    ButtonTemplate.template
+        { tooltipText = "Make new file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = NewFile
+        , label = "New"
+        }
+
+createFile :  Element Msg
+createFile  =
+    ButtonTemplate.template
+        { tooltipText = "Create new file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = CreateFile
+        , label = "Create"
+        }
+
+cancelNewFile :  Element Msg
+cancelNewFile  =
+    ButtonTemplate.template
+        { tooltipText = "Cancel new file"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = ClosePopup
+        , label = "Cancel"
+        }
+
+openFile : Element Msg
+openFile =
+    let
+        foo = 1
+    in
+    ButtonTemplate.template
+        { tooltipText = "Open docuemnt"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = ListDirectory "scripta"
+        , label = "Open"
+        }        
+saveDocument : Document -> Element Msg
+saveDocument document =
+    let
+        foo = 1
+    in
+    ButtonTemplate.template
+        { tooltipText = "Save current docuemnt"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = SendDocument
+        , label = "Save"
+        }
+
+
+
 
 
 darkRed : Color
@@ -42,49 +156,11 @@ darkRed =
     rgb255 140 0 0
 
 
-addTooltip placement label element =
-    el
-        [ tooltip placement (myTooltip label) ]
-        element
+gray : Color
+gray =
+    rgb255 60 60 60
 
 
-tooltip : (Element msg -> Attribute msg) -> Element Never -> Attribute msg
-tooltip usher tooltip_ =
-    inFront <|
-        el
-            [ width fill
-            , height fill
-            , transparent True
-            , mouseOver [ transparent False ]
-            , (usher << map never) <|
-                el
-                    [ htmlAttribute (Html.Attributes.style "pointerEvents" "none") ]
-                    tooltip_
-            ]
-            none
+white =
+    rgb255 255 255 255
 
-
-myTooltip : String -> Element msg
-myTooltip str =
-    el
-        [ Background.color (rgb 0 0 0)
-        , Font.color (rgb 1 1 1)
-        , padding 4
-        , Border.rounded 5
-        , Font.size 14
-        , Border.shadow
-            { offset = ( 0, 3 ), blur = 6, size = 0, color = rgba 0 0 0 0.32 }
-        ]
-        (text str)
-
-
-buttonStyle : List (Element.Attr () msg)
-buttonStyle =
-    [ Font.color (Element.rgb255 255 255 255)
-    , Element.paddingXY 15 8
-    ]
-
-
-bgGray : Float -> Element.Attr decorative msg
-bgGray g =
-    Background.color (Element.rgb g g g)

@@ -8,7 +8,6 @@ port module Main exposing (main)
 
 import Browser
 import Browser.Dom
-import Button
 import Color
 import Dict
 import Element exposing (..)
@@ -32,7 +31,8 @@ import Time
 import List.Extra
 import Browser.Navigation exposing (load)
 import String exposing (toInt)
-
+import Button
+import Model exposing(Model, Msg(..), Flags, PopupState(..))
 
 main =
     Browser.element
@@ -72,56 +72,6 @@ documentDecoder =
       (Json.Decode.field "name" Json.Decode.string)
       (Json.Decode.field "path" Json.Decode.string)
 
-
-type alias Model =
-    { count : Int
-    , document : Document
-    , documentNeedsSaving: Bool
-    , newFilename : String
-    , editRecord : Scripta.API.EditRecord
-    , language : Language
-    , currentTime : Time.Posix
-    , printingState : PDF.PrintingState
-    , tarFileState : PDF.TarFileState
-    , message : String
-    , ticks : Int
-    , popupState : PopupState
-    }
-
-type PopupState = NewDocumentWindowOpen | NoPopups
-
-type DocumentType
-    = InfoDocument
-    | TestDocument
-    | Example
-
-
-type Msg
-    = NoOp
-    | InputText String
-    | Render Scripta.API.Msg
-    | PDF PDFMsg
-    | SetExampleDocument String
-    | Export
-    | PrintToPDF
-    | GotPdfLink (Result Http.Error String)
-    | GotTarFile (Result Http.Error String)
-    | GetTarFile
-    | ChangePrintingState PDF.PrintingState
-    | ChangeTarFileState PDF.TarFileState
-    | SendDocument
-    | ListDirectory String
-    | DocumentReceived (Result Json.Decode.Error Document)
-    | ExportTick Time.Posix
-    | DocumentSaveTick Time.Posix
-    | NewFile
-    | InputNewFileName String
-    | CreateFile
-    | ClosePopup
-
-
-type alias Flags =
-    {}
 
 
 settings : a -> { windowWidth : number, counter : a, selectedId : String, selectedSlug : Maybe b, scale : Float }
@@ -235,36 +185,15 @@ update msg model =
                
 
         GetTarFile ->
-            let
-                defaultSettings_ =
-                    Scripta.API.defaultSettings
-
-                exportSettings_ =
-                    { defaultSettings_ | isStandaloneDocument = True }
+           let
+             defaultSettings = Scripta.API.defaultSettings
             in
-            if Scripta.API.getImageUrls model.editRecord.tree == [] then
-                let
-                    defaultSettings =
-                        Scripta.API.defaultSettings
-
-                    exportSettings =
-                        { defaultSettings | isStandaloneDocument = True }
-
-                    exportText =
-                        Scripta.API.prepareContentForExport model.currentTime exportSettings model.editRecord.tree
-
-                    fileName =
-                        Scripta.API.fileNameForExport model.editRecord.tree
-                in
-                ( model, download fileName exportText )
-
-            else
                 ( { model
                     | ticks = 0
                     , tarFileState = PDF.TarFileProcessing
                     , message = "requesting TAR file"
                   }
-                , PDF.tarCmd model.currentTime exportSettings_ model.editRecord.tree
+                , PDF.tarCmd model.currentTime { defaultSettings | isStandaloneDocument = True } model.editRecord.tree
                     |> Cmd.map PDF
                 )
 
@@ -272,10 +201,10 @@ update msg model =
         PDF _ ->
             ( model, Cmd.none )
 
-        GotPdfLink result ->
+        Model.GotPdfLink result ->
             ( { model | printingState = PDF.PrintReady, message = "Got PDF Link" }, Cmd.none )
 
-        ChangePrintingState printingState ->
+        Model.ChangePrintingState printingState ->
             ( { model | printingState = printingState, message = "Changing printing state" }, Cmd.none )
 
         PrintToPDF ->
@@ -288,10 +217,10 @@ update msg model =
             in
             ( { model | ticks = 0, printingState = PDF.PrintProcessing, message = "requesting PDF" }, PDF.printCmd model.currentTime exportSettings model.editRecord.tree |> Cmd.map PDF )
 
-        GotTarFile result ->
+        Model.GotTarFile result ->
             ( { model | printingState = PDF.PrintReady, message = "Got TarFile" }, Cmd.none )
 
-        ChangeTarFileState tarFileState ->
+        Model.ChangeTarFileState tarFileState ->
             ( { model | tarFileState = tarFileState, message = "Changing tar file state" }, Cmd.none )
 
         Render _ ->
@@ -445,19 +374,19 @@ controls model =
            , scrollbarY
            , width (px 120)  ]
         [ 
-           setDocumentButton "About" "about.L0" model.document.name
+           Button.setDocument "About" "about.L0" model.document.name
         , el [paddingXY 0 controlSpacing]  (text "")
-        , newFileButton
-        , openFileButton
-        , saveDocumentButton model.document
+        , Button.newFile
+        , Button.openFile
+        , Button.saveDocument model.document
         , el [ paddingXY 0 controlSpacing ] (text "")
-        , tarFileButton model
-        , printToPDF model
+        , Button.tarFile model
+        , Button.printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")
-        , setDocumentButton "L0" "demo.L0" model.document.name
-        , setDocumentButton "MicroLaTeX" "demo.tex" model.document.name
-        , setDocumentButton "XMarkdown" "demo.md" model.document.name
+        , Button.setDocument "L0" "demo.L0" model.document.name
+        , Button.setDocument "MicroLaTeX" "demo.tex" model.document.name
+        , Button.setDocument "XMarkdown" "demo.md" model.document.name
        
         ]
 
@@ -475,8 +404,8 @@ newDocument model =
                 , height (px 220) ] [
             el [] (text "New document")
             , inputNewFileName model 
-            , createFileButton
-            , el [alignBottom] (cancelNewFileButton)
+            , Button.createFile
+            , el [alignBottom] (Button.cancelNewFile)
 
             ]
 
@@ -552,148 +481,6 @@ jumpToTop id =
         |> Task.attempt (\_ -> NoOp)
 
 
-
-
-
--- BUTTONS
-
-
-buttonWidth =
-    105
-
-
-printToPDF : Model -> Element Msg
-printToPDF model =
-    case model.printingState of
-        PDF.PrintWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" , Font.color Color.black] PrintToPDF "PDF"
-
-        PDF.PrintProcessing ->
-            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
-
-        PDF.PrintReady ->
-            link
-                [ Font.size 14
-                , Background.color Color.white
-                , paddingXY 8 8
-                , Font.color Color.blue
-                , Element.Events.onClick (ChangePrintingState PDF.PrintWaiting)
-                , elementAttribute "target" "_blank"
-                ]
-                { url = PDF.pdfServUrl ++ Scripta.API.fileNameForExport model.editRecord.tree, label = el [] (text "Click for PDF") }
-
-
-tarFileButton : Model -> Element Msg
-tarFileButton model =
-    case model.tarFileState of
-        PDF.TarFileWaiting ->
-            Button.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File" ] GetTarFile "Export"
-
-        PDF.TarFileProcessing ->
-            el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
-
-        PDF.TarFileReady ->
-            link
-                [ Font.size 14
-                , Background.color Color.white
-                , paddingXY 8 8
-                , Font.color Color.blue
-                , Element.Events.onClick (ChangeTarFileState PDF.TarFileProcessing)
-                , elementAttribute "target" "_blank"
-                ]
-                { url = PDF.tarArchiveUrl ++ (Scripta.API.fileNameForExport model.editRecord.tree |> String.replace ".tex" ".tar"), label = el [] (text "Click for Tar file") }
-
-
-elementAttribute : String -> String -> Attribute msg
-elementAttribute key value =
-    htmlAttribute (Html.Attributes.attribute key value)
-
-
-setDocumentButton labelName documentName currentDocumentName =
-    let
-        bgColor =
-            if documentName == currentDocumentName then
-                darkRed
-
-            else
-                gray
-    in
-    Button.template
-        { tooltipText = "Set the markup language"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
-        , msg = SetExampleDocument documentName
-        , label = labelName
-        }
-
-newFileButton :  Element Msg
-newFileButton  =
-    Button.template
-        { tooltipText = "Make new file"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = NewFile
-        , label = "New"
-        }
-
-createFileButton :  Element Msg
-createFileButton  =
-    Button.template
-        { tooltipText = "Create new file"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = CreateFile
-        , label = "Create"
-        }
-
-cancelNewFileButton :  Element Msg
-cancelNewFileButton  =
-    Button.template
-        { tooltipText = "Cancel new file"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = ClosePopup
-        , label = "Cancel"
-        }
-
-openFileButton : Element Msg
-openFileButton =
-    let
-        foo = 1
-    in
-    Button.template
-        { tooltipText = "Open docuemnt"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = ListDirectory "scripta"
-        , label = "Open"
-        }        
-saveDocumentButton : Document -> Element Msg
-saveDocumentButton document =
-    let
-        foo = 1
-    in
-    Button.template
-        { tooltipText = "Save current docuemnt"
-        , tooltipPlacement = above
-        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = SendDocument
-        , label = "Save"
-        }
-
-
-darkRed : Color
-darkRed =
-    rgb255 140 0 0
-
-
-gray : Color
-gray =
-    rgb255 60 60 60
-
-
-white =
-    rgb255 255 255 255
 
 
 

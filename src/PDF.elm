@@ -64,23 +64,12 @@ printCmd currentTime settings forest =
 
 pdfCmd : Time.Posix -> Scripta.API.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
 pdfCmd currentTime settings syntaxTree =
-    let
-        imageUrls : List String
-        imageUrls =
-            Scripta.API.getImageUrls syntaxTree
-
-        fileName =
-            Scripta.API.fileNameForExport syntaxTree
-
-        contentForExport =
-            Scripta.API.prepareContentForExport currentTime settings syntaxTree
-    in
     Cmd.batch
         [ Http.request
             { method = "POST"
             , headers = [ Http.header "Content-Type" "application/json" ]
             , url = pdfServUrl
-            , body = Http.jsonBody (encodeForPDF fileName contentForExport imageUrls)
+            , body = Http.jsonBody (Scripta.API.encodeForPDF currentTime settings syntaxTree)
             , expect = Http.expectString GotPdfLink
             , timeout = Nothing
             , tracker = Nothing
@@ -90,23 +79,12 @@ pdfCmd currentTime settings syntaxTree =
 
 tarCmd : Time.Posix -> Scripta.API.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
 tarCmd currentTime settings syntaxTree =
-    let
-        imageUrls : List String
-        imageUrls =
-            Scripta.API.getImageUrls syntaxTree
-
-        fileName =
-            Scripta.API.fileNameForExport syntaxTree
-
-        contentForExport =
-            Scripta.API.prepareContentForExport currentTime settings syntaxTree
-    in
     Cmd.batch
         [ Http.request
             { method = "POST"
             , headers = [ Http.header "Content-Type" "application/json" ]
             , url = tarArchiveUrl
-            , body = Http.jsonBody (encodeForPDF fileName contentForExport imageUrls)
+            , body = Http.jsonBody (Scripta.API.encodeForPDF currentTime  settings syntaxTree)
             , expect = Http.expectString GotTarFile
             , timeout = Nothing
             , tracker = Nothing
@@ -126,12 +104,3 @@ gotLink model result =
                 [ Process.sleep 5 |> Task.perform (always (ChangePrintingState PrintReady))
                 ]
             )
-
-
-encodeForPDF : String -> String -> List String -> E.Value
-encodeForPDF id content urlList =
-    E.object
-        [ ( "id", E.string id )
-        , ( "content", E.string content )
-        , ( "urlList", E.list E.string urlList )
-        ]
