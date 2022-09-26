@@ -7,6 +7,7 @@ module Button exposing (
             , cancelNewFile
             , openFile
             , saveDocument
+            , setLanguage
       )
 
 import ButtonTemplate
@@ -20,6 +21,7 @@ import Element.Background as Background
 import Element.Events
 import Color
 import Html.Attributes
+import Scripta.Language exposing (Language(..))
 
 -- BUTTONS
 
@@ -27,6 +29,31 @@ import Html.Attributes
 buttonWidth =
     105
 
+
+setLanguage : Language -> Language -> Element Msg
+setLanguage currentLanguage newLanguage = 
+   let
+        bgColor =
+            if currentLanguage == newLanguage then
+                darkRed
+
+            else
+                gray
+
+        labelName = case newLanguage of 
+          L0Lang -> "L0"
+          MicroLaTeXLang -> "MicroLaTeX"
+          XMarkdownLang -> "XMarkdown"
+          _ -> "??"
+
+    in
+    ButtonTemplate.template
+        { tooltipText = "Set the markup language"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
+        , msg = SetLanguage newLanguage
+        , label = labelName
+        }
 
 printToPDF : Model -> Element Msg
 printToPDF model =

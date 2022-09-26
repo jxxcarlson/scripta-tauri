@@ -98,6 +98,7 @@ init flags =
       , ticks = 0
       , popupState = NoPopups
       , newFilename = ""
+      , inputFilename = ""
       }
     , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
     )
@@ -248,18 +249,28 @@ update msg model =
            
 
         NewFile ->
-          ({model | popupState = NewDocumentWindowOpen}, Cmd.none)
+          ({model | popupState = NewDocumentWindowOpen, inputFilename = "", newFilename = ""}, Cmd.none)
+
+
+        SetLanguage lang -> ({ model | language = lang}, Cmd.none)
 
         InputNewFileName str -> 
-          ({ model | newFilename = str}, Cmd.none)
+          ({ model | inputFilename = str}, Cmd.none)
 
         ClosePopup -> 
            ({model | popupState = NoPopups}, Cmd.none)
 
         CreateFile -> 
+          let
+              newFilename = case model.language of 
+                 L0Lang -> model.inputFilename ++ ".L0"
+                 MicroLaTeXLang -> model.inputFilename ++ ".tex"
+                 XMarkdownLang -> model.inputFilename ++ ".md"
+                 _  -> ".tex"
+          in
           {model | popupState = NoPopups} 
-            |> loadDocument { name = model.newFilename, content = "new document\n", path = "scripta/" ++ model.newFilename}
-            |> (\m -> (m, Cmd.none))
+            |> loadDocument { name = newFilename, content = "new document\n", path = "scripta/" ++ newFilename}
+            |> (\m -> ({m | newFilename = newFilename}, Cmd.none))
 
         DocumentReceived result ->
          case result of 
@@ -399,14 +410,17 @@ newDocument model =
                 , moveRight 740
                 , moveUp 720
                 , paddingXY 20 20
-                , spacing 24
-                , width (px 300)
-                , height (px 220) ] [
-            el [] (text "New document")
+                , spacing 18
+                , width (px 400)
+                , height (px 305) ] [
+            el [Font.size 18] (text "New document")
             , inputNewFileName model 
-            , Button.createFile
-            , el [alignBottom] (Button.cancelNewFile)
-
+            , column [spacing 8, paddingEach {top = 12, bottom = 0, left = 70, right = 0}] [
+                  Button.setLanguage model.language L0Lang
+                , Button.setLanguage model.language MicroLaTeXLang
+                , Button.setLanguage model.language XMarkdownLang
+            ]
+            , row [spacing 18, alignBottom] [Button.createFile, Button.cancelNewFile]
             ]
 
      _ -> Element.none
@@ -446,9 +460,9 @@ inputText model =
 
 inputNewFileName : Model -> Element Msg
 inputNewFileName model =
-    Input.text [ width (px 170), height (px 30), paddingXY 4 5, Font.size 14, alignTop, Font.color Color.black ]
+    Input.text [ width (px 300), height (px 30), paddingXY 4 5, Font.size 14, alignTop, Font.color Color.black ]
         { onChange = InputNewFileName
-        , text = model.newFilename
+        , text = model.inputFilename
         , placeholder = Nothing
         , label = Input.labelLeft [ fontGray 0.9 ] <| el [] (text "File name ")
         }

@@ -15,6 +15,7 @@ type alias Model =
     { count : Int
     , document : Document
     , documentNeedsSaving: Bool
+    , inputFilename : String
     , newFilename : String
     , editRecord : Scripta.API.EditRecord
     , language : Language
@@ -54,6 +55,7 @@ type Msg
     | GetTarFile
     | ChangePrintingState PDF.PrintingState
     | ChangeTarFileState PDF.TarFileState
+    | SetLanguage Language
     | SendDocument
     | ListDirectory String
     | DocumentReceived (Result Json.Decode.Error Document)
