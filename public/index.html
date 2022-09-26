@@ -44,6 +44,31 @@
 
     });
 
+
+
+     // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+    // Read the text file in the `$APPDIR/app.conf` path
+    // const contents = await readTextFile('app.conf', { dir: BaseDirectory.App });
+
+    app.ports.readPreferences.subscribe((path) => {
+      console.log("READ FILE")
+      window.__TAURI__.fs.readTextFile('scripta/preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
+        if (typeof contents === 'string') {
+        
+          alert("PREFS: " + contents )
+
+          app.ports.receivePreferences.send({preferences: contents});
+
+
+        } else { 
+
+          alert("No preferences file found")
+        }
+        
+      })
+
+    });
+
     // app.ports.listDirectory.subscribe(path => {
     //    console.log("I want to list", path);
     //    const entries =  window.__TAURI__.fs.readDir(path, { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
@@ -56,11 +81,11 @@
         if (typeof filepath === 'string') {
           window.__TAURI__.fs.readTextFile(filepath).then((content) => {
             console.log("FILEPATH", filepath)
-            console.log("CONTENT", content)
+            // console.log("CONTENT", content)
             app.ports.receiveDocument.send({name: filepath, path: filepath, content: content});
           })
         } else {
-          alert("Multiple files chosen, but should be only one file!")
+          alert("Bad file selection (cancelled?)")
         }
       })
 

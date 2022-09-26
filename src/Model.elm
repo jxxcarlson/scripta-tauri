@@ -5,6 +5,7 @@ import Scripta.API
 import PDF exposing (PDFMsg(..))
 import Scripta.Language exposing (Language(..))
 import Time
+import Dict exposing(Dict)
 
 import Html exposing (Html)
 import Http
@@ -25,6 +26,7 @@ type alias Model =
     , message : String
     , ticks : Int
     , popupState : PopupState
+     ,preferences : Dict String String
     }
 
 type PopupState = NewDocumentWindowOpen | NoPopups
@@ -60,6 +62,7 @@ type Msg
     | SendDocument
     | ListDirectory String
     | DocumentReceived (Result Json.Decode.Error Document)
+    | PreferencesReceived (Result Json.Decode.Error String)
     | ExportTick Time.Posix
     | DocumentSaveTick Time.Posix
     | Refresh

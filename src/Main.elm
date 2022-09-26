@@ -9,7 +9,8 @@ port module Main exposing (main)
 import Browser
 import Browser.Dom
 import Color
-import Dict
+import Maybe.Extra
+import Dict exposing(Dict)
 import Element exposing (..)
 import Element.Background as Background
 import Element.Events
@@ -49,6 +50,7 @@ subscriptions model =
         Time.every 500 ExportTick
         , Time.every 3000 DocumentSaveTick
         , receiveDocument (Json.Decode.decodeValue documentDecoder >> DocumentReceived)
+        , receivePreferences (Json.Decode.decodeValue preferencesDecoder >> PreferencesReceived)
     ]
 
 autosave model = 
@@ -58,12 +60,14 @@ autosave model =
      (model, Cmd.none)
 
 -- PORTS, OUTBOUND
+port readPreferences : String ->  Cmd a
 port sendDocument : Document -> Cmd a
 
 port listDirectory : String -> Cmd a
 
 -- PORTS, INBOUND
 port receiveDocument : (Json.Encode.Value -> msg) -> Sub msg
+port receivePreferences : (Json.Encode.Value -> msg) -> Sub msg
 
 documentDecoder : Json.Decode.Decoder Document
 documentDecoder =
@@ -73,6 +77,9 @@ documentDecoder =
       (Json.Decode.field "path" Json.Decode.string)
 
 
+preferencesDecoder : Json.Decode.Decoder String
+preferencesDecoder =
+      (Json.Decode.field "preferences" Json.Decode.string)
 
 settings : a -> { windowWidth : number, counter : a, selectedId : String, selectedSlug : Maybe b, scale : Float }
 settings counter =
@@ -99,8 +106,9 @@ init flags =
       , popupState = NoPopups
       , newFilename = ""
       , inputFilename = ""
+      , preferences = Dict.empty
       }
-    , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]
+    , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text", readPreferences "foo" ]
     )
 
 
@@ -308,12 +316,35 @@ update msg model =
                        {model | message = "Document opened"} 
                        |> loadDocument {doc | name = name_, path = fixPath doc.path}
                        |> (\m -> (m, Cmd.none))
+
+        PreferencesReceived result ->
+         case result of 
+           Err _ -> ({ model | message = "Error opening document"}, Cmd.none)
+           Ok prefs -> ({ model | preferences = extractPrefs prefs |> Debug.log "PREFERENCES"}, Cmd.none)
+              
                     
         Refresh ->
            ( { model | editRecord = Scripta.API.init Dict.empty ( Document.language model.document) model.document.content }, Cmd.none )
             
-             
-            
+
+extractPrefs : String -> Dict String String
+extractPrefs data = 
+   data
+     |> String.lines
+     |> List.map (String.split ":")
+     |> List.filter (\line -> List.length line == 2)
+     |> List.map listToTuple
+     |> Maybe.Extra.values
+     |> Dict.fromList
+
+listToTuple : List a -> Maybe (a, a) 
+listToTuple list = 
+   case list of 
+    (first::second::[]) ->Just  (first, second)
+    _ -> Nothing
+
+
+
 fixPath : String -> String
 fixPath str = 
    str 
