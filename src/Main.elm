@@ -230,6 +230,32 @@ update msg model =
         Export ->
             ( model, Cmd.none )
 
+        RawExport ->
+          let
+                doc = { name = fileName, path = path, content = content}
+
+                defaultSettings =
+                    Scripta.API.defaultSettings
+
+                exportSettings =
+                    { defaultSettings | isStandaloneDocument = True }
+                content = Scripta.API.rawExport  exportSettings model.editRecord.tree
+
+
+                rawFileName = model.document.name 
+                   |> String.split "." 
+                   |> List.reverse 
+                   |> List.drop 1
+                   |> List.reverse 
+                   |> String.join "."
+                fileName = rawFileName ++ "-raw.tex"
+
+                path = "scripta/" ++ fileName
+
+          in
+          
+            ( { model | message = "Saved " ++ fileName}, sendDocument doc)
+
        -- PORTS
 
         SendDocument -> 
@@ -283,6 +309,8 @@ update msg model =
                        |> loadDocument {doc | name = name_, path = fixPath doc.path}
                        |> (\m -> (m, Cmd.none))
                     
+        Refresh ->
+           ( { model | editRecord = Scripta.API.init Dict.empty ( Document.language model.document) model.document.content }, Cmd.none )
             
              
             
@@ -390,8 +418,10 @@ controls model =
         , Button.newFile
         , Button.openFile
         , Button.saveDocument model.document
+        , Button.refresh
         , el [ paddingXY 0 controlSpacing ] (text "")
         , Button.tarFile model
+        , Button.rawExport
         , Button.printToPDF model
         , el [paddingXY 0 controlSpacing]  (text "")
         , el [Font.size 16, Font.color Color.white] (text "Sample docs")

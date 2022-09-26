@@ -49,6 +49,7 @@ type Msg
     | PDF PDFMsg
     | SetExampleDocument String
     | Export
+    | RawExport
     | PrintToPDF
     | GotPdfLink (Result Http.Error String)
     | GotTarFile (Result Http.Error String)
@@ -61,6 +62,7 @@ type Msg
     | DocumentReceived (Result Json.Decode.Error Document)
     | ExportTick Time.Posix
     | DocumentSaveTick Time.Posix
+    | Refresh
     | NewFile
     | InputNewFileName String
     | CreateFile

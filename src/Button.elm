@@ -8,6 +8,8 @@ module Button exposing (
             , openFile
             , saveDocument
             , setLanguage
+            , refresh
+            , rawExport
       )
 
 import ButtonTemplate
@@ -29,6 +31,26 @@ import Scripta.Language exposing (Language(..))
 buttonWidth =
     105
 
+
+rawExport :Element Msg
+rawExport = 
+    ButtonTemplate.template
+        { tooltipText = "Convert to LaTeX and export as *-raw.tex in  ~/Desktop/scripta"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = RawExport
+        , label = "Raw"
+        }    
+
+refresh :Element Msg
+refresh = 
+    ButtonTemplate.template
+        { tooltipText = "Recompile source text"
+        , tooltipPlacement = above
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = Refresh
+        , label = "Refresh"
+        }
 
 setLanguage : Language -> Language -> Element Msg
 setLanguage currentLanguage newLanguage = 
