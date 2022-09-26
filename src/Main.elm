@@ -61,6 +61,7 @@ autosave model =
 
 -- PORTS, OUTBOUND
 port readPreferences : String ->  Cmd a
+port savePreferences : String -> Cmd a
 port sendDocument : Document -> Cmd a
 
 port listDirectory : String -> Cmd a
@@ -97,7 +98,7 @@ init flags =
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
       , documentNeedsSaving = False
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
-      , language = L0Lang
+      , language = MicroLaTeXLang
       , currentTime = Time.millisToPosix 0
       , printingState = PDF.PrintWaiting
       , tarFileState = PDF.TarFileWaiting
@@ -301,10 +302,18 @@ update msg model =
                  MicroLaTeXLang -> model.inputFilename ++ ".tex"
                  XMarkdownLang -> model.inputFilename ++ ".md"
                  _  -> ".tex"
+
+              languageName =  case model.language of 
+                 L0Lang -> "L0"
+                 MicroLaTeXLang -> "MicroLaTeX"
+                 XMarkdownLang -> "XMarkdown"
+                 _  -> "MicroLaTeX"
+              newPreferences = Dict.insert "language" languageName model.preferences
+              preferenceString = Dict.toList newPreferences |> List.map (\(a,b) -> a ++ ": " ++ b) |> String.join "\n"
           in
-          {model | popupState = NoPopups} 
+          {model | popupState = NoPopups, preferences = newPreferences} 
             |> loadDocument { name = newFilename, content = "new document\n", path = "scripta/" ++ newFilename}
-            |> (\m -> ({m | newFilename = newFilename}, Cmd.none))
+            |> (\m -> ({m | newFilename = newFilename, documentNeedsSaving = True}, savePreferences preferenceString))
 
         DocumentReceived result ->
          case result of 
@@ -319,8 +328,16 @@ update msg model =
 
         PreferencesReceived result ->
          case result of 
-           Err _ -> ({ model | message = "Error opening document"}, Cmd.none)
-           Ok prefs -> ({ model | preferences = extractPrefs prefs |> Debug.log "PREFERENCES"}, Cmd.none)
+           Err _ -> ({ model | preferences = Dict.empty, message = "Error getting preferences"}, Cmd.none)
+           Ok prefs -> 
+             let
+                 preferences = extractPrefs prefs
+                 language = case getLanguage preferences of 
+                    Just lang -> lang
+                    Nothing -> model.language
+
+             in
+             ({ model | message = "Preferences: " ++ String.replace "\n" ", " prefs, preferences = preferences, language = language}, Cmd.none)
               
                     
         Refresh ->
@@ -332,6 +349,7 @@ extractPrefs data =
    data
      |> String.lines
      |> List.map (String.split ":")
+     |> List.map (List.map String.trim)
      |> List.filter (\line -> List.length line == 2)
      |> List.map listToTuple
      |> Maybe.Extra.values
@@ -571,3 +589,15 @@ mainColumnStyle =
     , paddingXY 20 20
     , height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
     ]
+
+
+-- HELPERS
+
+getLanguage : Dict String String -> Maybe Language
+getLanguage dict = 
+   case Dict.get "language" dict of 
+    Just "L0" -> Just L0Lang
+    Just "MicroLaTeX" -> Just MicroLaTeXLang
+    Just "XMarkdown" -> Just XMarkdownLang
+    _ -> Nothing
+
