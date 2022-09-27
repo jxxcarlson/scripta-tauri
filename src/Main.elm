@@ -7,6 +7,7 @@ port module Main exposing (main)
 -}
 
 import Browser
+import Process
 import Browser.Dom
 import Color
 import Maybe.Extra
@@ -95,11 +96,14 @@ settings counter =
     }
 
 
+initialDoc = { content = "\\title{Welcome!}\n\nPress  \\{strong{About} to continue\n", path = "NONE", name = "start.tex"}
+
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
-      , initialText = "?"
+      , initialText = "??????"
       , linenumber = 0
       , doSync = False
       , pressedKeys = []
@@ -117,7 +121,12 @@ init flags =
       , preferences = Dict.empty
       , homeDirectory = Nothing
       }
-    , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text", readPreferences "foo" ]
+    , Cmd.batch [ 
+            jumpToTop "scripta-output"
+          , jumpToTop "input-text", readPreferences "foo"
+          , delayCmd 1 (SetExampleDocument "about.L0")
+     ]
+
     )
 
 
@@ -168,7 +177,6 @@ update msg model =
               } , Cmd.none)
 
         InputText { position, source } ->
-          -- ( {model | document = Document.updateContent source model.document}, Cmd.none)
           ({model |   editRecord = Scripta.API.update model.editRecord source
                     , document = Document.updateContent source model.document
                     , count = model.count + 1
@@ -176,7 +184,7 @@ update msg model =
             , Cmd.none)
 
         InputCursor { position, source } ->
-            View.Editor.inputCursor { position = position |> Debug.log "POSITION", source = source } model
+            View.Editor.inputCursor { position = position, source = source } model
 
         SelectedText str ->
             firstSyncLR model str
@@ -542,19 +550,6 @@ displayRenderedText model =
         (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map Render))
         ]
 
-
-
-
-    --    InputText str ->
-    --         ( { model
-    --             | document = Document.updateContent str model.document
-    --             , count = model.count + 1
-    --             , editRecord = Scripta.API.update model.editRecord str
-    --             , documentNeedsSaving = True
-    --           }
-    --         , Cmd.none
-    --         )
-
 inputNewFileName : Model -> Element Msg
 inputNewFileName model =
     Input.text [ width (px 300), height (px 30), paddingXY 4 5, Font.size 14, alignTop, Font.color Color.black ]
@@ -635,6 +630,9 @@ updateKeys model keyMsg =
     , Cmd.none
     )
 
+delayCmd : Float -> msg -> Cmd msg
+delayCmd delay msg =
+    Task.perform (\_ -> msg) (Process.sleep delay)
 
 firstSyncLR : Model -> String -> ( Model, Cmd Msg )
 firstSyncLR model searchSourceText =

@@ -34,7 +34,7 @@ view model =
         , E.html
             (Html.node "codemirror-editor"
                 [ -- SEND INFORMATION TO CODEMIRROR
-                  HtmlAttr.attribute "text" model.initialText-- send the document text to codemirror
+                  HtmlAttr.attribute "text" model.initialText -- send the document text to codemirror
                 , HtmlAttr.attribute "linenumber" (String.fromInt (model.linenumber - 1)) -- send info to codemirror
                 , HtmlAttr.attribute "selection" (stringOfBool model.doSync) -- send info to codemirror
                 ]
