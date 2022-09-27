@@ -20802,7 +20802,7 @@ window.initCodeMirror = function () {
 
 }
 
-const initCodemirror = async function(app) {
+const initCodemirror_ = async function() {
 
 console.log("I am starting codemirror-element: init");
 var codemirrorJs = document.createElement('script')
@@ -20813,3 +20813,4 @@ console.log("codemirror-element: I have appended codemirror to document.head");
 
 }
 
+initCodemirror_()

@@ -12,6 +12,6 @@ import Model exposing(Model)
 appHeight = 700
 
 editorWidth =
-    550
+    500
 
 
