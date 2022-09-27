@@ -177,7 +177,7 @@ update msg model =
             )
 
         InputText2 { position, source } ->
-          (model, Cmd.none)
+          ( {model | document = Document.updateContent source model.document}, Cmd.none)
 
         InputCursor { position, source } ->
             View.Editor.inputCursor { position = position, source = source } model
