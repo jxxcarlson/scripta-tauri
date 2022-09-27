@@ -108,6 +108,7 @@ init flags =
       , newFilename = ""
       , inputFilename = ""
       , preferences = Dict.empty
+      , homeDirectory = Nothing
       }
     , Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text", readPreferences "foo" ]
     )

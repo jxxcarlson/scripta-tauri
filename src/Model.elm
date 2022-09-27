@@ -26,9 +26,11 @@ type alias Model =
     , message : String
     , ticks : Int
     , popupState : PopupState
-     ,preferences : Dict String String
+    , preferences : Dict String String
+    , homeDirectory : Maybe HomeDirectory
     }
 
+type HomeDirectory = DesktopDir | DocumentsDir 
 type PopupState = NewDocumentWindowOpen | NoPopups
 
 type DocumentType
