@@ -61,7 +61,7 @@ autosave model =
 
 -- PORTS, OUTBOUND
 port readPreferences : String ->  Cmd a
-port savePreferences : String -> Cmd a
+port writePreferences : String -> Cmd a
 port sendDocument : Document -> Cmd a
 
 port listDirectory : String -> Cmd a
@@ -314,7 +314,7 @@ update msg model =
           in
           {model | popupState = NoPopups, preferences = newPreferences} 
             |> loadDocument { name = newFilename, content = "new document\n", path = "scripta/" ++ newFilename}
-            |> (\m -> ({m | newFilename = newFilename, documentNeedsSaving = True}, savePreferences preferenceString))
+            |> (\m -> ({m | newFilename = newFilename, documentNeedsSaving = True}, writePreferences preferenceString))
 
         DocumentReceived result ->
          case result of 

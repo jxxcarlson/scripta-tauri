@@ -44,7 +44,7 @@
 
     });
 
-    app.ports.savePreferences.subscribe(data => {
+    app.ports.writePreferences.subscribe(data => {
       console.log("SAVING PREFERENCES:", data);
       window.__TAURI__.fs.writeTextFile(
         { path: "scripta/preferences.txt", contents: data },
