@@ -12,10 +12,14 @@ import Http
 
 import Json.Decode
 import Document exposing (SourceTextRecord)
+import Keyboard
 
 type alias Model =
     { count : Int
     , document : Document
+    , linenumber : Int
+    , doSync : Bool
+    , pressedKeys : List Keyboard.Key
     , documentNeedsSaving: Bool
     , inputFilename : String
     , newFilename : String
@@ -51,6 +55,8 @@ type Msg
     = NoOp
     | InputText String
     | InputText2 SourceTextRecord
+    | InputCursor { position : Int, source : String }
+    | SelectedText String
     | Render Scripta.API.Msg
     | PDF PDFMsg
     | SetExampleDocument String

@@ -20802,8 +20802,7 @@ window.initCodeMirror = function () {
 
 }
 
-
-exports.init = async function(app) {
+const initCodemirror = async function(app) {
 
 console.log("I am starting codemirror-element: init");
 var codemirrorJs = document.createElement('script')

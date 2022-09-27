@@ -11,6 +11,7 @@ import Browser.Dom
 import Color
 import Maybe.Extra
 import Dict exposing(Dict)
+import View.Editor
 import Element exposing (..)
 import Element.Background as Background
 import Element.Events
@@ -35,6 +36,7 @@ import Browser.Navigation exposing (load)
 import String exposing (toInt)
 import Button
 import Model exposing(Model, Msg(..), Flags, PopupState(..))
+import Keyboard
 
 main =
     Browser.element
@@ -97,6 +99,9 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
+      , linenumber = 0
+      , doSync = False
+      , pressedKeys = []
       , documentNeedsSaving = False
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
       , language = MicroLaTeXLang
@@ -173,6 +178,13 @@ update msg model =
 
         InputText2 { position, source } ->
           (model, Cmd.none)
+
+        InputCursor { position, source } ->
+            View.Editor.inputCursor { position = position, source = source } model
+
+        SelectedText str ->
+            firstSyncLR model str
+
 
 
         -- InputText { position, source } ->
@@ -419,7 +431,8 @@ mainColumn model =
         [ column [  spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")  ]
             [   header model
                 ,row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
-                [ inputText model
+                [ -- inputText model
+                View.Editor.view model
                 , displayRenderedText model
                 , controls model
                 ]
@@ -618,6 +631,51 @@ getLanguage dict =
     Just "XMarkdown" -> Just XMarkdownLang
     _ -> Nothing
 
+updateKeys model keyMsg =
+    let
+        pressedKeys =
+            Keyboard.update keyMsg model.pressedKeys
+
+        doSync =
+            if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
+                not model.doSync
+
+            else
+                model.doSync
+    in
+    ( { model | pressedKeys = pressedKeys, doSync = doSync, lastInteractionTime = model.currentTime }
+    , Cmd.none
+    )
+
+
+firstSyncLR : Model -> String -> ( Model, Cmd Msg )
+firstSyncLR model searchSourceText =
+   (model, Cmd.none)
+    -- let
+    --     data =
+    --         let
+    --             foundIds_ =
+    --                 Compiler.ASTTools.matchingIdsInAST searchSourceText model.editRecord.tree
+
+    --             id_ =
+    --                 List.head foundIds_ |> Maybe.withDefault "(nothing)"
+    --         in
+    --         { foundIds = foundIds_
+    --         , foundIdIndex = 1
+    --         , cmd = View.Utility.setViewportForElement (View.Utility.viewId model.popupState) id_
+    --         , selectedId = id_
+    --         , searchCount = 0
+    --         }
+    -- in
+    -- ( { model
+    --     | selectedId = data.selectedId
+    --     , foundIds = data.foundIds
+    --     , foundIdIndex = data.foundIdIndex
+    --     , searchCount = data.searchCount
+    --     , messages = [ { txt = ("[" ++ adjustId data.selectedId ++ "]") :: List.map adjustId data.foundIds |> String.join ", ", status = MSWhite } ]
+    --   }
+    -- , data.cmd
+    -- )
 
 
 -- inputText2 : Model -> ( Model, Cmd Msg )
