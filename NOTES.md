@@ -86,3 +86,20 @@ Only 3 small things
 - cargo tauri dev -- --debug is this --debug for elm? because tauri itself is always in debug mode in tauri dev
 Oh and for the Acknowledgements: my name is Fabian-Lars (that's my irl first name btw) - buuut while appreciated, it's really not necessary :)
 Of course i can only talk about the Tauri stuff, never worked with elm ✌️
+
+## Codesigning
+
+@lucasfernog @JonasKruckenberg 
+
+Hi, I am trying to set up code signing (Apple) for a Tauri app.   I've installed a certificate in the keychain and have done
+
+security find-identity -v -p codesigning
+  1) 17...B0 "Apple Development: James Carlson (Z7GZ2KP8SV)"
+     1 valid identities found
+
+
+I am having trouble with this:
+
+Open the Keychain Access app and find your certificate's keychain entry. Expand the entry, double click on the key item, and select Export "$KEYNAME" .
+
+I expand the entry, but it is not clear what is meant by "key item".  I tried double-clicking on various items, e.g., "Public Key", and also the key itself. There is no response, hence no way to choose 'Export "$KEYNAME"

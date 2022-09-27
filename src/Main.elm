@@ -171,6 +171,9 @@ update msg model =
             )
 
 
+        -- InputText { position, source } ->
+        --             Frontend.Editor.inputText model { position = position, source = source }
+
         SetExampleDocument documentName ->
             let
                 doc =
@@ -537,6 +540,15 @@ inputText model =
         }
  )
 
+    --    InputText str ->
+    --         ( { model
+    --             | document = Document.updateContent str model.document
+    --             , count = model.count + 1
+    --             , editRecord = Scripta.API.update model.editRecord str
+    --             , documentNeedsSaving = True
+    --           }
+    --         , Cmd.none
+    --         )
 
 inputNewFileName : Model -> Element Msg
 inputNewFileName model =
@@ -601,4 +613,22 @@ getLanguage dict =
     Just "MicroLaTeX" -> Just MicroLaTeXLang
     Just "XMarkdown" -> Just XMarkdownLang
     _ -> Nothing
+
+
+
+-- inputText2 : Model -> ( Model, Cmd Msg )
+-- inputText2 model =
+--   let
+--         editRecord =
+--             Scripta.API.update model.editRecord model.document.content
+
+--     in
+--     ( { model
+--         | sourceText = str
+--         , editRecord = editRecord
+--         , counter = model.counter + 1
+--         , documentDirty = True
+--       }
+--     , Cmd.none
+--     )
 
