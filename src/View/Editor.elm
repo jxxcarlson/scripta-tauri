@@ -37,8 +37,6 @@ view model =
                   HtmlAttr.attribute "text" model.document.content-- send the document text to codemirror
                 , HtmlAttr.attribute "linenumber" (String.fromInt (model.linenumber - 1)) -- send info to codemirror
                 , HtmlAttr.attribute "selection" (stringOfBool model.doSync) -- send info to codemirror
-
-                -- , HtmlAttr.attribute "editorevent" (NetworkModel.toString model.editorEvent)
                 ]
                 []
             )
