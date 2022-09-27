@@ -99,6 +99,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
       , document = { content = Text.about, name = "about.L0", path = "NONE"}
+      , initialText = "?"
       , linenumber = 0
       , doSync = False
       , pressedKeys = []
@@ -166,21 +167,16 @@ update msg model =
                 , printingState = printingState
               } , Cmd.none)
 
-        InputText str ->
-            ( { model
-                | document = Document.updateContent str model.document
-                , count = model.count + 1
-                , editRecord = Scripta.API.update model.editRecord str
-                , documentNeedsSaving = True
-              }
-            , Cmd.none
-            )
-
-        InputText2 { position, source } ->
-          ( {model | document = Document.updateContent source model.document}, Cmd.none)
+        InputText { position, source } ->
+          -- ( {model | document = Document.updateContent source model.document}, Cmd.none)
+          ({model |   editRecord = Scripta.API.update model.editRecord source
+                    , document = Document.updateContent source model.document
+                    , count = model.count + 1
+                    , documentNeedsSaving = True}
+            , Cmd.none)
 
         InputCursor { position, source } ->
-            View.Editor.inputCursor { position = position, source = source } model
+            View.Editor.inputCursor { position = position |> Debug.log "POSITION", source = source } model
 
         SelectedText str ->
             firstSyncLR model str
@@ -213,6 +209,8 @@ update msg model =
             in
             model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
                
+
+
 
         GetTarFile ->
            let
@@ -545,17 +543,7 @@ displayRenderedText model =
         ]
 
 
-inputText : Model -> Element Msg
-inputText model =
- el [ width (px 500),  height (px windowHeight), alignTop, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"),  scrollbarY] (
-    Input.multiline [ width (px 500), height (px windowHeight),  scrollbarY, Font.size 14, alignTop, htmlId "input-text" ]
-        { onChange = InputText
-        , text = model.document.content
-        , placeholder = Nothing
-        , label = Input.labelAbove [ fontGray 0.9 ] <| el [] (text "Source text")
-        , spellcheck = False
-        }
- )
+
 
     --    InputText str ->
     --         ( { model
@@ -582,12 +570,12 @@ inputNewFileName model =
 
 loadDocument : Document -> Model -> Model
 loadDocument doc model = 
-  { model | document = doc
+  { model | document = Document.updateContent doc.content doc
           , documentNeedsSaving = False
+          , initialText = doc.content
           , editRecord = Scripta.API.init Dict.empty ( Document.language doc) doc.content
           , language = Document.language doc 
           , count = model.count + 1}
-
 
 -- VIEWPORT
 

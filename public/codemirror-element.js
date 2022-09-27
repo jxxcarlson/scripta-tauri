@@ -20667,6 +20667,7 @@ window.initCodeMirror = function () {
 
 
                 function sendText(editor) {
+                    console.log("text-change, position", editor.state.selection.main.head)
                     const event = new CustomEvent('text-change',
                        { 'detail': {position: editor.state.selection.main.head, source: editor.state.doc.toString()}
                        , 'bubbles':true, 'composed': true});

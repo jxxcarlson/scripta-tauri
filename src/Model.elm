@@ -24,6 +24,7 @@ type alias Model =
     , inputFilename : String
     , newFilename : String
     , editRecord : Scripta.API.EditRecord
+    , initialText : String
     , language : Language
     , currentTime : Time.Posix
     , printingState : PDF.PrintingState
@@ -53,8 +54,7 @@ type alias Flags =
 
 type Msg
     = NoOp
-    | InputText String
-    | InputText2 SourceTextRecord
+    | InputText SourceTextRecord
     | InputCursor { position : Int, source : String }
     | SelectedText String
     | Render Scripta.API.Msg
