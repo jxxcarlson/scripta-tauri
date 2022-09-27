@@ -1,0 +1,13 @@
+
+
+exports.init = async function(app) {
+
+console.log("I am starting codemirror-element: init");
+var codemirrorJs = document.createElement('script')
+codemirrorJs.type = 'text/javascript'
+codemirrorJs.onload = initCodeMirror ()
+document.head.appendChild(codemirrorJs);
+console.log("codemirror-element: I have appended codemirror to document.head");
+
+}
+
