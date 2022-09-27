@@ -47,7 +47,7 @@
     app.ports.writePreferences.subscribe(data => {
       console.log("SAVING PREFERENCES:", data);
       window.__TAURI__.fs.writeTextFile(
-        { path: "scripta/preferences.txt", contents: data },
+        { path: '.scripta-preferences.txt', contents: data },
         {
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
@@ -68,7 +68,7 @@
 
     app.ports.readPreferences.subscribe((path) => {
       console.log("READ FILE")
-      window.__TAURI__.fs.readTextFile('scripta/preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
+      window.__TAURI__.fs.readTextFile('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
         if (typeof contents === 'string') {
 
           app.ports.receivePreferences.send({preferences: contents});
