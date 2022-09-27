@@ -9,3 +9,4 @@ cp public/tauri.js out/
 cp public/katex.min.js out/
 cp public/katex.min.css out/
 cp -r public/fonts out/
+cp public/codemirror-element.js out/
