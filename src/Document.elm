@@ -1,4 +1,4 @@
-module Document exposing (Document, default, updateContent, language)
+module Document exposing (Document, SourceTextRecord, default, updateContent, language)
 
 import Scripta.Language exposing (Language(..))
 import List.Extra
@@ -7,6 +7,9 @@ type alias Document = { content : String
                       , name : String
                       , path : String
                       }
+
+type alias SourceTextRecord =
+    { position : Int, source : String }
 
 language : Document -> Language
 language doc = 

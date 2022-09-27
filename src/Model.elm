@@ -1,6 +1,6 @@
 module Model exposing (Model, Msg(..), Flags, PopupState(..))
 
-import Document exposing(Document)
+import Document exposing(Document, SourceTextRecord)
 import Scripta.API
 import PDF exposing (PDFMsg(..))
 import Scripta.Language exposing (Language(..))
@@ -11,6 +11,7 @@ import Html exposing (Html)
 import Http
 
 import Json.Decode
+import Document exposing (SourceTextRecord)
 
 type alias Model =
     { count : Int
@@ -49,6 +50,7 @@ type alias Flags =
 type Msg
     = NoOp
     | InputText String
+    | InputText2 SourceTextRecord
     | Render Scripta.API.Msg
     | PDF PDFMsg
     | SetExampleDocument String

@@ -19,6 +19,7 @@ import Element.Input as Input
 import File.Download
 import Html exposing (Html)
 import Html.Attributes
+import Html.Events
 import Http
 import Json.Encode
 import Json.Decode
@@ -169,6 +170,9 @@ update msg model =
               }
             , Cmd.none
             )
+
+        InputText2 { position, source } ->
+          (model, Cmd.none)
 
 
         -- InputText { position, source } ->
@@ -632,3 +636,30 @@ getLanguage dict =
 --     , Cmd.none
 --     )
 
+
+-- FOR CODEMIRROR
+
+onTextChange : Html.Attribute Msg
+onTextChange =
+    dataDecoder
+        |> Json.Decode.map InputText2
+        |> Html.Events.on "text-change"
+
+
+dataDecoder : Json.Decode.Decoder Document.SourceTextRecord
+dataDecoder =
+    dataDecoder_
+        |> Json.Decode.at [ "detail" ]
+
+
+dataDecoder_ : Json.Decode.Decoder Document.SourceTextRecord
+dataDecoder_ =
+    Json.Decode.map2 Document.SourceTextRecord
+        (Json.Decode.field "position" Json.Decode.int)
+        (Json.Decode.field "source" Json.Decode.string)
+
+
+textDecoder : Json.Decode.Decoder String
+textDecoder =
+    Json.Decode.string
+        |> Json.Decode.at [ "detail" ]
