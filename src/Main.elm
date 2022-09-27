@@ -8,6 +8,7 @@ port module Main exposing (main)
 
 import Browser
 import Process
+import View.Utility
 import Browser.Dom
 import Color
 import Maybe.Extra
@@ -369,6 +370,10 @@ update msg model =
         Refresh ->
            ( { model | editRecord = Scripta.API.init Dict.empty ( Document.language model.document) model.document.content }, Cmd.none )
             
+        SyncLR ->
+            syncLR model
+
+        SetViewPortForElement _ -> (model, Cmd.none)
 
 extractPrefs : String -> Dict String String
 extractPrefs data = 
@@ -633,6 +638,52 @@ updateKeys model keyMsg =
 delayCmd : Float -> msg -> Cmd msg
 delayCmd delay msg =
     Task.perform (\_ -> msg) (Process.sleep delay)
+
+syncLR : Model -> (Model, Cmd Msg )
+syncLR model =
+  (model, Cmd.none)
+    -- let
+    --     data =
+    --         if model.foundIdIndex == 0 then
+    --             let
+    --                 foundIds_ =
+    --                     Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
+
+    --                 id_ =
+    --                     List.head foundIds_ |> Maybe.withDefault "(nothing)"
+    --             in
+    --             { foundIds = foundIds_
+    --             , foundIdIndex = 1
+    --             , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+    --             , selectedId = id_
+    --             , searchCount = 0
+    --             }
+
+    --         else
+    --             let
+    --                 id_ =
+    --                     List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)"
+    --             in
+    --             { foundIds = model.foundIds
+    --             , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
+    --             , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+    --             , selectedId = id_
+    --             , searchCount = model.searchCount + 1
+    --             }
+    -- in
+    -- ( { model
+    --     | selectedId = data.selectedId
+    --     , foundIds = data.foundIds
+    --     , foundIdIndex = data.foundIdIndex
+    --     , searchCount = data.searchCount
+    --     , messages = [ { txt = ("!![" ++ adjustId data.selectedId ++ "]") :: List.map adjustId data.foundIds |> String.join ", ", status = MSWhite } ]
+    --   }
+    -- , data.cmd
+    -- )
+
+
+
+
 
 firstSyncLR : Model -> String -> ( Model, Cmd Msg )
 firstSyncLR model searchSourceText =

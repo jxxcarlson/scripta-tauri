@@ -1,6 +1,7 @@
 module Model exposing (Model, Msg(..), Flags, PopupState(..))
 
 import Document exposing(Document, SourceTextRecord)
+import Browser.Dom
 import Scripta.API
 import PDF exposing (PDFMsg(..))
 import Scripta.Language exposing (Language(..))
@@ -80,3 +81,5 @@ type Msg
     | InputNewFileName String
     | CreateFile
     | ClosePopup
+    | SyncLR
+    | SetViewPortForElement (Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport ))
