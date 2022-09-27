@@ -52,42 +52,40 @@
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
       )
-      // console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
-      // window.__TAURI__.fs.writeTextFile(
-      //   { path: data.path, contents: data.content },
-      //   {
-      //     dir: window.__TAURI__.fs.BaseDirectory.Desktop
-      //   }
-      // )
-
+ 
     });
 
-     // import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
-    // Read the text file in the `$APPDIR/app.conf` path
-    // const contents = await readTextFile('app.conf', { dir: BaseDirectory.App });
 
-    app.ports.readPreferences.subscribe((path) => {
-      console.log("READ FILE")
-      window.__TAURI__.fs.readTextFile('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
-        if (typeof contents === 'string') {
+  app.ports.readPreferences.subscribe((path) => {
+  console.log("READ PREFERENCES") 
+  window.__TAURI__.fs.exists('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
+    .then((exists) => { if (exists) { sendPreferences() } else { sendDefaultPreferences() } })
+    .catch(console.error) // just in case i messed up
+});
 
-          app.ports.receivePreferences.send({preferences: contents});
 
-        } else { 
+    const sendPreferences = function () { 
 
-          alert("No preferences file found")
-        }
-        
-      })
+        window.__TAURI__.fs.readTextFile('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
+          if (typeof contents === 'string') {
 
-    });
+            app.ports.receivePreferences.send({preferences: contents});
 
-    // app.ports.listDirectory.subscribe(path => {
-    //    console.log("I want to list", path);
-    //    const entries =  window.__TAURI__.fs.readDir(path, { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
-    //    entries.then(data => console.log("DIR ENTRIES", data))
+          } else { 
 
-    // });
+            alert("No preferences file found")
+          }
+          
+        })
+
+      } // sendPreferences
+
+      const sendDefaultPreferences = function () { 
+
+        app.ports.receivePreferences.send({preferences: "language: MicroLaTeX\nhome: Desktop"});
+
+      } // sendDefaultPreferences
+;
 
     app.ports.listDirectory.subscribe((path) => {
       window.__TAURI__.dialog.open().then((filepath) => {

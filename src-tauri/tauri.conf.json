@@ -13,7 +13,7 @@
   "tauri": {
     "allowlist": {
       "fs": {
-        "scope": ["$DESKTOP/*"],
+        "scope": ["$DESKTOP/*", "$DOCUMENTS/*"],
         "all": true, 
         "readFile": true,
         "writeFile": true,
