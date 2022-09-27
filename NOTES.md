@@ -43,3 +43,46 @@ https://thoughtbot.com/blog/bridging-elm-and-javascript-with-ports
 ## JS Stuff
 
 https://javascript.info/promise-basics
+
+## TO DO
+
+exposing fs to the front end is ultimately less secure, so if you can help it, i would recommend making an invoke call to the rust backend to check for those files and do that work in Tauri, then just return a boolean to the frontend. Otherwise, you could end up with security issues if someone were to inject some frontend js. I'm not sure exactly what frontend you're using but say you're using es6. it would look like this:
+
+```
+frontend.js
+import { invoke } from "@tauri-apps/api/tauri"
+
+invoke("check_file", "file_a.txt")
+  .then(exists => console.log("file exists: ", exists))
+  .catch(err => console.error("unable to check for file: ", err)) 
+```
+
+```
+main.rs
+use std::path::Path;
+
+#[tauri::command]
+fn check_file(file_name: String) -> bool {
+    Path::new(file_name).exists()
+}
+
+tauri::Builder::default()
+    // This is where you pass in your commands
+    .invoke_handler(tauri::generate_handler![check_file])
+    .run(tauri::generate_context!())
+    .expect("failed to run app");
+```
+
+## Comments on Medium
+
+Looks good so far!
+
+Only 3 small things
+
+- A really common issue people have is that they are missing system dependencies (like xcode-select --install on macos etc)
+
+- "Install the Tauri toolchain: cargo install tauri-app then cargo install tauri-cli." -> The first command is not a valid command, because tauri-app doesn't exist, it's cargo install create-tauri-app which is our bootstrapper (like create-react-app etc, basically a fancy tauri init including frontends), and therefore not necessary for your setup
+
+- cargo tauri dev -- --debug is this --debug for elm? because tauri itself is always in debug mode in tauri dev
+Oh and for the Acknowledgements: my name is Fabian-Lars (that's my irl first name btw) - buuut while appreciated, it's really not necessary :)
+Of course i can only talk about the Tauri stuff, never worked with elm ✌️

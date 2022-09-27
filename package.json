@@ -8,7 +8,8 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^1.1.1",
-    "elm-live": "^4.0.2"
+    "elm-live": "^4.0.2",
+    "uglify-js": "^3.17.2"
   },
   "scripts": {
     "start": "watch \"elm make src/Main.elm --output=public/main.js\" src/**/*.elm"

@@ -461,7 +461,7 @@ controls model =
            , height fill
            , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
            , scrollbarY
-           , width (px 120)  ]
+           , width (px 160)  ]
         [ 
            Button.setDocument "About" "about.L0" model.document.name
         , el [paddingXY 0 controlSpacing]  (text "")

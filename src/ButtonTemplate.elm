@@ -13,7 +13,7 @@ template buttonData =
     row ([ bgGray 0.2, pointer, mouseDown [ Background.color darkRed ] ] ++ buttonData.attributes)
         [ Input.button buttonStyle
             { onPress = Just buttonData.msg
-            , label = addTooltip buttonData.tooltipPlacement buttonData.tooltipText (el [ centerX, centerY, Font.size 14 ] (text buttonData.label))
+            , label = addTooltip buttonData.tooltipPlacement buttonData.tooltipText (el [  centerX, centerY, Font.size 14 ] (text buttonData.label))
             }
         ]
 
@@ -69,9 +69,9 @@ myTooltip str =
     el
         [ Background.color (rgb 0 0 0)
         , Font.color (rgb 1 1 1)
+        , Font.size 11
         , padding 4
         , Border.rounded 5
-        , Font.size 14
         , Border.shadow
             { offset = ( 0, 3 ), blur = 6, size = 0, color = rgba 0 0 0 0.32 }
         ]

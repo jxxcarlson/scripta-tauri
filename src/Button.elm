@@ -29,14 +29,14 @@ import Scripta.Language exposing (Language(..))
 
 
 buttonWidth =
-    105
+    160
 
 
 rawExport :Element Msg
 rawExport = 
     ButtonTemplate.template
-        { tooltipText = "Convert to LaTeX and export as *-raw.tex in  ~/Desktop/scripta"
-        , tooltipPlacement = above
+        { tooltipText = "export raw LaTeX"
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = RawExport
         , label = "Raw"
@@ -46,7 +46,7 @@ refresh :Element Msg
 refresh = 
     ButtonTemplate.template
         { tooltipText = "Recompile source text"
-        , tooltipPlacement = above
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = Refresh
         , label = "Refresh"
@@ -70,8 +70,8 @@ setLanguage currentLanguage newLanguage =
 
     in
     ButtonTemplate.template
-        { tooltipText = "Set the markup language"
-        , tooltipPlacement = above
+        { tooltipText = "Set markup language"
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
         , msg = SetLanguage newLanguage
         , label = labelName
@@ -81,7 +81,7 @@ printToPDF : Model -> Element Msg
 printToPDF model =
     case model.printingState of
         PDF.PrintWaiting ->
-            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Generate PDF" , Font.color Color.black] PrintToPDF "PDF"
+            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export PDF" , Font.color Color.black] PrintToPDF "PDF"
 
         PDF.PrintProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
@@ -102,7 +102,7 @@ tarFile : Model -> Element Msg
 tarFile model =
     case model.tarFileState of
         PDF.TarFileWaiting ->
-            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Get Tar File" ] GetTarFile "Export"
+            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export LaTeX" ] GetTarFile "Export"
 
         PDF.TarFileProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
@@ -134,8 +134,8 @@ setDocument labelName documentName currentDocumentName =
                 gray
     in
     ButtonTemplate.template
-        { tooltipText = "Set the markup language"
-        , tooltipPlacement = above
+        { tooltipText = "Read-only doc"
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
         , msg = SetExampleDocument documentName
         , label = labelName
@@ -145,7 +145,7 @@ newFile :  Element Msg
 newFile  =
     ButtonTemplate.template
         { tooltipText = "Make new file"
-        , tooltipPlacement = above
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = NewFile
         , label = "New"
@@ -155,7 +155,7 @@ createFile :  Element Msg
 createFile  =
     ButtonTemplate.template
         { tooltipText = "Create new file"
-        , tooltipPlacement = above
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = CreateFile
         , label = "Create"
@@ -165,7 +165,7 @@ cancelNewFile :  Element Msg
 cancelNewFile  =
     ButtonTemplate.template
         { tooltipText = "Cancel new file"
-        , tooltipPlacement = above
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = ClosePopup
         , label = "Cancel"
@@ -177,8 +177,8 @@ openFile =
         foo = 1
     in
     ButtonTemplate.template
-        { tooltipText = "Open docuemnt"
-        , tooltipPlacement = above
+        { tooltipText = "Open document"
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = ListDirectory "scripta"
         , label = "Open"
@@ -189,8 +189,8 @@ saveDocument document =
         foo = 1
     in
     ButtonTemplate.template
-        { tooltipText = "Save current docuemnt"
-        , tooltipPlacement = above
+        { tooltipText = "Save docuemnt"
+        , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = SendDocument
         , label = "Save"
