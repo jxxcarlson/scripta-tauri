@@ -357,6 +357,9 @@ update msg model =
                        |> loadDocument {doc | name = name_, path = fixPath doc.path}
                        |> (\m -> (m, Cmd.none))
 
+        Reload document -> 
+           (model |> loadDocument document, Cmd.none)
+
         PreferencesReceived result ->
          case result of 
            Err _ -> ({ model | preferences = Dict.empty, message = "Error getting preferences"}, Cmd.none)
@@ -387,7 +390,13 @@ update msg model =
             sync model msg_
 
         SetAppMode newMode -> 
+          let
+              currentDocument = model.document
+          in
+          
+          -- ({ model | mode = newMode, document = Document.default}, delayCmd 10 (Reload  currentDocument))
           ({ model | mode = newMode}, Cmd.none)
+
 
 setViewportForElement : Model -> Result xx (Browser.Dom.Element, Browser.Dom.Viewport ) -> ( Model, Cmd Msg )
 setViewportForElement model result =

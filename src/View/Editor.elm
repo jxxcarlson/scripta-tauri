@@ -10,7 +10,7 @@ import Html.Attributes as HtmlAttr
 import Html.Events
 import Json.Decode
 import View.Geometry as Geometry
-import Model exposing(Model, Msg(..))
+import Model exposing(Model, Msg(..), AppMode(..))
 
 
 view : Model -> Element Msg
@@ -25,7 +25,9 @@ view model =
         , htmlId "editor-here"
         , E.width (E.px 550)
         , E.height (E.px (Geometry.appHeight))
-        , E.width (E.px (Geometry.editorWidth))
+        , case model.mode of 
+           EditorMode -> E.width (E.px (Geometry.editorWidth))
+           ReaderMode -> E.width (E.px 0)
         , Background.color (E.rgb255 0 68 85)
         , Font.color (E.rgb 0.85 0.85 0.85)
         , Font.size 12

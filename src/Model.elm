@@ -99,4 +99,5 @@ type Msg
     | KeyMsg Keyboard.Msg
     | RenderMarkupMsg MarkupMsg
     | SetAppMode AppMode
+    | Reload Document
 

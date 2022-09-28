@@ -28,7 +28,7 @@ language doc =
 updateContent : String -> Document -> Document
 updateContent str doc = {doc | content = str}
 
-default = { content = defaultText, name = "default.L0"}
+default = { content = defaultText, name = "default.L0", path = "NONE"}
 
 defaultText = """
 

@@ -37,9 +37,10 @@ mainColumn model =
             [   header model
                 ,row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ -- inputText model
-                case model.mode of 
-                   EditorMode -> View.Editor.view model
-                   ReaderMode -> Element.column [width (px 250)] []
+                View.Editor.view model
+                , case model.mode of 
+                   EditorMode -> Element.none
+                   ReaderMode -> Element.column [width (px 300)] []
                 , displayRenderedText model
                 , case model.mode of
                     EditorMode -> editorControls model
@@ -63,12 +64,13 @@ header model = row [paddingXY 20 0
   [
      el [] (text <| "Document: " ++ model.document.name)
      , row [alignRight, spacing 8] [
-            View.Button.setMode model.mode EditorMode
-          , View.Button.setMode model.mode ReaderMode
-          , case model.mode of
-             EditorMode -> Element.none
-             ReaderMode -> View.Button.openFile
-           ]
+            case model.mode of
+                EditorMode -> Element.none
+                ReaderMode -> View.Button.openFile
+            ]
+           , View.Button.setMode model.mode EditorMode
+           , View.Button.setMode model.mode ReaderMode
+         
   ]
 
 
