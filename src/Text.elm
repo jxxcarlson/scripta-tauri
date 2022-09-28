@@ -45,6 +45,10 @@ current line, ctrl-E to the end.  Type command-F to bring up the
 seach-and-replace window (bottom of the editor). Type ESC
 to dismiss the seach-and-replace window.
 
+\\item
+\\strong{Tip.} Click on a section title to go back to the table of contents.
+
+
 This is a pre-release version of Scripta Desktop.  Please write
 to Jim Carlson (jxxcarlson, gmail) with comments and bug reports.
 
@@ -92,8 +96,105 @@ $$
 \\strong{Tip:} Click on a section title to go back to the table of contents.
 """
 
+l0Demo = 
+  """
 
-l0Demo =
+| title
+About L0
+
+| banner
+[link Scripta.io https://scripta.io]
+
+| contents
+
+| section 1
+What it is
+
+L0 is a markup language with a Lisp-like syntax.  As an example,
+if one says `[i italic text]`, one gets 
+[i italic text], while `[i [b bold] [blue italic] text]` yields
+[i [b bold] [blue italic] text].  
+
+A construct like `[i italic text]` is called an [term L-expression].  It has the form left bracket followed by the name
+of the L-expression followed by its arguments, followed by a right bracket.  The arguments are themselves L-expressions: ordinary text, or the kind of L-expression just described.
+There are two special kinds of L-expressions: 
+
+|| code
+$ ... $
+
+for in-line mathematics  and 
+
+|| code
+` ... `
+
+for in-line code.  Thus `$a^2 + b^2 = c^2$` renders
+as $a^2 + b^2 = c^2$ and 
+
+|| code
+`a[i] := 0`
+
+renders as `a[i] := 0`.
+
+
+| subheading
+Verbatim Blocks
+
+In addition to L-expression, there are [term blocks].  The text
+
+
+|| code
+|| image
+https://www.birdsandblooms.com...jpg
+
+
+renders an online image:
+
+
+|| image
+https://www.birdsandblooms.com/wp-content/uploads/2018/10/BNBbyc18_patricia-warren.jpg
+
+The text 
+
+
+|| code
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
+
+renders an equation:
+
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
+
+
+| subheading
+Ordinary Blocks
+
+For section headings, we say this:
+
+|| code
+| section 1
+Introduction
+
+The "1" means that this is a top-level section.  Thus we use
+`| section 2` for subsections.  For theorems, we say this:
+
+|| code
+| theorem (Pythagoras)
+If $a$ and $b$ are the legs of a right triangle and $c$
+is the hypotenuse, then $a^2 + b^2 = c^2$
+
+| theorem (Pythagoras)
+If $a$ and $b$ are the legs of a right triangle and $c$
+is the hypotenuse, then $a^2 + b^2 = c^2$
+
+An ordinary block begins with `|` while a verbatim block 
+begins with `||`.
+
+"""
+
+l0DemoOLD =
     """
 | title
 Demo (L0)
