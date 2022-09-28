@@ -379,24 +379,24 @@ update msg model =
             updateKeys model keyMsg
 
         RenderMarkupMsg msg_ ->
-            render model msg_
+            sync model msg_
 
 
 {-|
 
   EDITOR SYNCHRONIZATION
 -}
-render : Model -> MarkupMsg -> ( Model, Cmd Msg )
-render model msg_ =
+sync : Model -> MarkupMsg -> ( Model, Cmd Msg )
+sync model msg_ =
     case msg_ of
         SendMeta meta ->
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
             ( { model | linenumber = meta.begin }, Cmd.none )
 
         SendId line ->
-            -- TODO: the below (using id also for line number) is not a great idea.
+            -- This is the code that highlights a line in the source text when rendered text is clicked.
             let
-                linenumber = line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x + 1)
+                linenumber = line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x - 1)
             in
             
             ( { model |  linenumber = linenumber,   message =  "Line " ++ (linenumber |> String.fromInt) }, Cmd.none )
