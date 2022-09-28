@@ -52,9 +52,16 @@ setMode currentAppMode newAppMode =
 
                 ReaderMode ->
                     "Read"
+
+        tooltipText =  case newAppMode of
+                EditorMode ->
+                    "Go to Edit mode"
+
+                ReaderMode ->
+                    "go to Read mode"
     in
     View.ButtonTemplate.template
-        { tooltipText = "export raw LaTeX"
+        { tooltipText = tooltipText
         , tooltipPlacement = below
         , attributes = [ Font.color white, bg, width (px 60) ]
         , msg = SetAppMode newAppMode
