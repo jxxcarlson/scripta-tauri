@@ -1,5 +1,6 @@
-module Model exposing (Model, Msg(..), Flags, PopupState(..))
+module Model exposing (Model, Msg(..), Flags, PopupState(..), SelectionState(..))
 
+import Render.Msg exposing(MarkupMsg(..))
 import Document exposing(Document, SourceTextRecord)
 import Browser.Dom
 import Scripta.API
@@ -7,6 +8,7 @@ import PDF exposing (PDFMsg(..))
 import Scripta.Language exposing (Language(..))
 import Time
 import Dict exposing(Dict)
+import Keyboard
 
 import Html exposing (Html)
 import Http
@@ -20,6 +22,12 @@ type alias Model =
     , document : Document
     , linenumber : Int
     , doSync : Bool
+    , foundIdIndex : Int
+    , searchSourceText : String
+    , searchCount : Int
+    , selectedId : String
+    , selectionHighLighted : SelectionState
+    , foundIds : List String
     , pressedKeys : List Keyboard.Key
     , documentNeedsSaving: Bool
     , inputFilename : String
@@ -36,6 +44,9 @@ type alias Model =
     , preferences : Dict String String
     , homeDirectory : Maybe HomeDirectory
     }
+
+
+type SelectionState = Unselected | IdSelected String
 
 type HomeDirectory = DesktopDir | DocumentsDir 
 type PopupState = NewDocumentWindowOpen | NoPopups
@@ -58,7 +69,7 @@ type Msg
     | InputText SourceTextRecord
     | InputCursor { position : Int, source : String }
     | SelectedText String
-    | Render Scripta.API.Msg
+    | Render MarkupMsg
     | PDF PDFMsg
     | SetExampleDocument String
     | Export
@@ -83,3 +94,6 @@ type Msg
     | ClosePopup
     | SyncLR
     | SetViewPortForElement (Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport ))
+    | KeyMsg Keyboard.Msg
+    | RenderMarkupMsg MarkupMsg
+

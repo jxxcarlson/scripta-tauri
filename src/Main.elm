@@ -6,6 +6,7 @@ port module Main exposing (main)
    This version uses `mdgriffith/elm-ui` for the view functions.
 -}
 
+import Render.Msg exposing(MarkupMsg(..))
 import Browser
 import View.Main
 import Process
@@ -37,7 +38,7 @@ import Time
 import List.Extra
 import Browser.Navigation exposing (load)
 import String exposing (toInt)
-import Model exposing(Model, Msg(..), Flags, PopupState(..))
+import Model exposing(Model, Msg(..), Flags, PopupState(..), SelectionState(..))
 import Keyboard
 
 main =
@@ -56,6 +57,7 @@ subscriptions model =
         , Time.every 3000 DocumentSaveTick
         , receiveDocument (Json.Decode.decodeValue documentDecoder >> DocumentReceived)
         , receivePreferences (Json.Decode.decodeValue preferencesDecoder >> PreferencesReceived)
+        , Sub.map KeyMsg Keyboard.subscriptions
     ]
 
 autosave model = 
@@ -99,6 +101,12 @@ init flags =
       , initialText = "??????"
       , linenumber = 0
       , doSync = False
+      , foundIdIndex = 0
+      , searchSourceText = ""
+      , searchCount = 0
+      , selectedId = ""
+      , selectionHighLighted = Unselected
+      , foundIds =  []
       , pressedKeys = []
       , documentNeedsSaving = False
       , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
@@ -367,6 +375,46 @@ update msg model =
 
         SetViewPortForElement _ -> (model, Cmd.none)
 
+        KeyMsg keyMsg ->
+            updateKeys model keyMsg
+
+        RenderMarkupMsg msg_ ->
+            render model msg_
+
+
+
+render : Model -> MarkupMsg -> ( Model, Cmd Msg )
+render model msg_ =
+    case msg_ of
+        SendMeta _ ->
+            -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
+            ( model, Cmd.none )
+
+        SendId line ->
+            -- TODO: the below (using id also for line number) is not a great idea.
+            ( { model | message =  "Line " ++ (line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x + 1) |> String.fromInt) }, Cmd.none )
+
+        SelectId id ->
+            -- the element with this id will be highlighted
+            if model.selectionHighLighted == IdSelected id then
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, View.Utility.setViewportForElement "__RENDERED_TEXT__" id )
+            else
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, View.Utility.setViewportForElement "__RENDERED_TEXT__" id )
+
+        HighlightId id ->
+            -- the element with this id will be highlighted
+            if model.selectionHighLighted == IdSelected id then
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, Cmd.none )
+
+            else
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, Cmd.none )
+
+        GetPublicDocument _ _ -> (model, Cmd.none)
+        GetPublicDocumentFromAuthor _ _ _  -> (model, Cmd.none)
+        GetDocumentWithSlug _ _ -> (model, Cmd.none)
+        ProposeSolution _ -> (model, Cmd.none)
+
+       
 extractPrefs : String -> Dict String String
 extractPrefs data = 
    data
@@ -401,6 +449,16 @@ download fileName fileContents =
 
 
 -- HELPERS
+
+adjustId : String -> String
+adjustId str =
+    case String.toInt str of
+        Nothing ->
+            str
+
+        Just n ->
+            String.fromInt (n + 2)
+
 
 loadDocument : Document -> Model -> Model
 loadDocument doc model = 
@@ -442,16 +500,16 @@ getLanguage dict =
 updateKeys model keyMsg =
     let
         pressedKeys =
-            Keyboard.update keyMsg model.pressedKeys
+            Keyboard.update keyMsg model.pressedKeys |> Debug.log "pressedKeys"
 
         doSync =
             if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
-                not model.doSync
+                not model.doSync |> Debug.log "doSync (1)"
 
             else
-                model.doSync
+                model.doSync |> Debug.log "doSync (2)"
     in
-    ( { model | pressedKeys = pressedKeys, doSync = doSync, lastInteractionTime = model.currentTime }
+    ( { model | pressedKeys = pressedKeys, doSync = doSync }
     , Cmd.none
     )
 
@@ -461,45 +519,44 @@ delayCmd delay msg =
 
 syncLR : Model -> (Model, Cmd Msg )
 syncLR model =
-  (model, Cmd.none)
-    -- let
-    --     data =
-    --         if model.foundIdIndex == 0 then
-    --             let
-    --                 foundIds_ =
-    --                     Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
+    let
+        data =
+            if model.foundIdIndex == 0 then
+                let
+                    foundIds_ =
+                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
 
-    --                 id_ =
-    --                     List.head foundIds_ |> Maybe.withDefault "(nothing)"
-    --             in
-    --             { foundIds = foundIds_
-    --             , foundIdIndex = 1
-    --             , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
-    --             , selectedId = id_
-    --             , searchCount = 0
-    --             }
+                    id_ =
+                        List.head foundIds_ |> Maybe.withDefault "(nothing)"
+                in
+                { foundIds = foundIds_
+                , foundIdIndex = 1
+                , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+                , selectedId = id_
+                , searchCount = 0
+                }
 
-    --         else
-    --             let
-    --                 id_ =
-    --                     List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)"
-    --             in
-    --             { foundIds = model.foundIds
-    --             , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
-    --             , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
-    --             , selectedId = id_
-    --             , searchCount = model.searchCount + 1
-    --             }
-    -- in
-    -- ( { model
-    --     | selectedId = data.selectedId
-    --     , foundIds = data.foundIds
-    --     , foundIdIndex = data.foundIdIndex
-    --     , searchCount = data.searchCount
-    --     , messages = [ { txt = ("!![" ++ adjustId data.selectedId ++ "]") :: List.map adjustId data.foundIds |> String.join ", ", status = MSWhite } ]
-    --   }
-    -- , data.cmd
-    -- )
+            else
+                let
+                    id_ =
+                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)"
+                in
+                { foundIds = model.foundIds
+                , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
+                , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+                , selectedId = id_
+                , searchCount = model.searchCount + 1
+                }
+    in
+    ( { model
+        | selectedId = data.selectedId
+        , foundIds = data.foundIds
+        , foundIdIndex = data.foundIdIndex
+        , searchCount = data.searchCount
+        , message = adjustId data.selectedId 
+      }
+    , data.cmd
+    )
 
 
 

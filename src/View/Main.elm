@@ -1,6 +1,6 @@
 module View.Main exposing (view)
 
-
+import Render.Msg exposing(MarkupMsg(..))
 import Browser
 import View.Utility
 import Browser.Dom
@@ -144,7 +144,7 @@ displayRenderedText model =
         , scrollbarY
         , htmlId "scripta-output"
         ]
-        (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map Render))
+        (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map (RenderMarkupMsg)))
         ]
 
 htmlId : String -> Attribute msg
