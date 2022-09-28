@@ -1,4 +1,4 @@
-module Button exposing (
+module View.Button exposing (
             printToPDF
             , tarFile
             , setDocument
@@ -12,7 +12,7 @@ module Button exposing (
             , rawExport
       )
 
-import ButtonTemplate
+import View.ButtonTemplate
 import Element exposing (..)
 import Model exposing(Model, Msg(..))
 import PDF
@@ -34,7 +34,7 @@ buttonWidth =
 
 rawExport :Element Msg
 rawExport = 
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "export raw LaTeX"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -44,7 +44,7 @@ rawExport =
 
 refresh :Element Msg
 refresh = 
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Recompile source text"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -69,7 +69,7 @@ setLanguage currentLanguage newLanguage =
           _ -> "??"
 
     in
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Set markup language"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
@@ -81,7 +81,7 @@ printToPDF : Model -> Element Msg
 printToPDF model =
     case model.printingState of
         PDF.PrintWaiting ->
-            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export PDF" , Font.color Color.black] PrintToPDF "PDF"
+            View.ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export PDF" , Font.color Color.black] PrintToPDF "PDF"
 
         PDF.PrintProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
@@ -102,7 +102,7 @@ tarFile : Model -> Element Msg
 tarFile model =
     case model.tarFileState of
         PDF.TarFileWaiting ->
-            ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export LaTeX" ] GetTarFile "Export"
+            View.ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export LaTeX" ] GetTarFile "Export"
 
         PDF.TarFileProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue, Font.color Color.white ] (text "Please wait ...")
@@ -133,7 +133,7 @@ setDocument labelName documentName currentDocumentName =
             else
                 gray
     in
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Read-only doc"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color bgColor, width (px buttonWidth) ]
@@ -143,7 +143,7 @@ setDocument labelName documentName currentDocumentName =
 
 newFile :  Element Msg
 newFile  =
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Make new file"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -153,7 +153,7 @@ newFile  =
 
 createFile :  Element Msg
 createFile  =
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Create new file"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -163,7 +163,7 @@ createFile  =
 
 cancelNewFile :  Element Msg
 cancelNewFile  =
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Cancel new file"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -176,7 +176,7 @@ openFile =
     let
         foo = 1
     in
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Open document"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
@@ -188,7 +188,7 @@ saveDocument document =
     let
         foo = 1
     in
-    ButtonTemplate.template
+    View.ButtonTemplate.template
         { tooltipText = "Save docuemnt"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]

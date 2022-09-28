@@ -1,4 +1,4 @@
-module ButtonTemplate exposing (ButtonData, simpleTemplate, template)
+module View.ButtonTemplate exposing (ButtonData, simpleTemplate, template)
 
 import Element exposing (..)
 import Element.Background as Background
