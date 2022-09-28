@@ -37,9 +37,13 @@ mainColumn model =
             [   header model
                 ,row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
                 [ -- inputText model
-                View.Editor.view model
+                case model.mode of 
+                   EditorMode -> View.Editor.view model
+                   ReaderMode -> Element.column [width (px 250)] []
                 , displayRenderedText model
-                , controls model
+                , case model.mode of
+                    EditorMode -> editorControls model
+                    ReaderMode -> readerControls model
                 ]
             , footer model
             ]
@@ -58,7 +62,13 @@ header model = row [paddingXY 20 0
     ]  
   [
      el [] (text <| "Document: " ++ model.document.name)
-     , row [alignRight, spacing 8] [View.Button.setMode model.mode EditorMode, View.Button.setMode model.mode ReaderMode ]
+     , row [alignRight, spacing 8] [
+            View.Button.setMode model.mode EditorMode
+          , View.Button.setMode model.mode ReaderMode
+          , case model.mode of
+             EditorMode -> Element.none
+             ReaderMode -> View.Button.openFile
+           ]
   ]
 
 
@@ -80,8 +90,8 @@ documentNeedsSavingIndicator needsSaving =
 
 controlSpacing = 6
 
-controls : Model -> Element Msg
-controls model =
+editorControls : Model -> Element Msg
+editorControls model =
     column [ alignTop
            , spacing 8
            , paddingXY 16 22
@@ -105,6 +115,21 @@ controls model =
         , View.Button.setDocument "L0" "demo.L0" model.document.name
         , View.Button.setDocument "MicroLaTeX" "demo.tex" model.document.name
         , View.Button.setDocument "XMarkdown" "demo.md" model.document.name
+       
+        ]
+
+readerControls : Model -> Element Msg
+readerControls model =
+    column [ alignTop
+           , spacing 8
+           , paddingEach {left = 120, right = 0, top = 20, bottom = 20}
+           , height fill
+           , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
+           , scrollbarY
+           , width (px 160)  ]
+        [ 
+          
+        
        
         ]
 
@@ -142,7 +167,9 @@ displayRenderedText model =
         [ spacing 18
         , Font.size 14
         , Background.color (Element.rgb 1.0 1.0 1.0)
-        , width (px 500)
+        , case model.mode of 
+            EditorMode -> width (px 500)
+            ReaderMode -> width (px 500)
         , height (px windowHeight), Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
         , paddingXY 16 32
         , scrollbarY
