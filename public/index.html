@@ -63,7 +63,19 @@
   window.__TAURI__.fs.exists('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
     .then((exists) => { if (exists) { sendPreferences() } else { sendDefaultPreferences() } })
     .catch(console.error) // just in case i messed up
-});
+  });
+
+  app.ports.setScriptaDirectory.subscribe((path) => {
+    console.log("setScriptaDirectory") 
+    window.__TAURI__.fs.exists('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
+      .then((exists) => { if (exists) 
+          { console.log("scripta directory exists") } else 
+          { console.log("scripta directory DOES NOT exist, making one for you.")
+            window.__TAURI__.fs.createDir('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
+          }}) 
+      .catch(console.error) // just in case i messed up
+  });
+
 
 
     const sendPreferences = function () { 

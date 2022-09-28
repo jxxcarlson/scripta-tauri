@@ -78,6 +78,9 @@ autosave model =
 port readPreferences : String -> Cmd a
 
 
+port setScriptaDirectory : String -> Cmd a
+
+
 port writePreferences : String -> Cmd a
 
 
@@ -117,7 +120,7 @@ initialDoc =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { count = 0
-      , document = { content = Text.about, name = "about.L0", path = "NONE" }
+      , document = { content = Text.about, name = "about.tex", path = "NONE" }
       , initialText = "??????"
       , linenumber = 0
       , doSync = False
@@ -129,7 +132,7 @@ init flags =
       , foundIds = []
       , pressedKeys = []
       , documentNeedsSaving = False
-      , editRecord = Scripta.API.init Dict.empty L0Lang Text.about
+      , editRecord = Scripta.API.init Dict.empty MicroLaTeXLang Text.about
       , language = MicroLaTeXLang
       , currentTime = Time.millisToPosix 0
       , printingState = PDF.PrintWaiting
@@ -147,7 +150,8 @@ init flags =
         [ View.Utility.jumpToTop Config.renderedTextViewportID
         , View.Utility.jumpToTop "input-text"
         , readPreferences "foo"
-        , delayCmd 1 (SetExampleDocument "about.L0")
+        , delayCmd 1 (SetExampleDocument "about.tex")
+        , setScriptaDirectory "foo"
         ]
     )
 
@@ -230,7 +234,7 @@ update msg model =
                         "demo.md" ->
                             { content = Text.xMarkdown, name = documentName, path = "NONE" }
 
-                        "about.L0" ->
+                        "about.tex" ->
                             { content = Text.about, name = documentName, path = "NONE" }
 
                         _ ->
