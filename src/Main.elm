@@ -188,7 +188,7 @@ update msg model =
             View.Editor.inputCursor { position = position, source = source } model
 
         SelectedText str ->
-            firstSyncLR model str
+            syncLR { model | searchSourceText = str}
 
 
 
@@ -376,7 +376,7 @@ update msg model =
         SetViewPortForElement _ -> (model, Cmd.none)
 
         KeyMsg keyMsg ->
-            updateKeys model keyMsg
+            updateKeys model (keyMsg |> Debug.log "KEY")
 
         RenderMarkupMsg msg_ ->
             sync model msg_
@@ -391,7 +391,7 @@ sync model msg_ =
     case msg_ of
         SendMeta meta ->
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
-            ( { model | linenumber = meta.begin }, Cmd.none )
+            ( { model | linenumber = meta.begin }, Cmd.none )  |> Debug.log "META"
 
         SendId line ->
             -- This is the code that highlights a line in the source text when rendered text is clicked.
@@ -404,17 +404,17 @@ sync model msg_ =
         SelectId id ->
             -- the element with this id will be highlighted
             if model.selectionHighLighted == IdSelected id then
-                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, View.Utility.setViewportForElement "__RENDERED_TEXT__" id )
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, View.Utility.setViewportForElement "scripta-output" id ) |> Debug.log "SELECT (1)"
             else
-                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, View.Utility.setViewportForElement "__RENDERED_TEXT__" id )
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, View.Utility.setViewportForElement "scripta-output" id )  |> Debug.log "SELECT (2)"
 
         HighlightId id ->
             -- the element with this id will be highlighted
             if model.selectionHighLighted == IdSelected id then
-                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, Cmd.none )
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, Cmd.none )  |> Debug.log "HIGHLIGHT (1)"
 
             else
-                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, Cmd.none )
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, Cmd.none )  |> Debug.log "HIGHLIGHT (2)"
 
         GetPublicDocument _ _ -> (model, Cmd.none)
         GetPublicDocumentFromAuthor _ _ _  -> (model, Cmd.none)
@@ -507,14 +507,14 @@ getLanguage dict =
 updateKeys model keyMsg =
     let
         pressedKeys =
-            Keyboard.update keyMsg model.pressedKeys 
+            Keyboard.update keyMsg model.pressedKeys   |> Debug.log "PRESSED KEYS"
 
         doSync =
             if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
-                not model.doSync 
+                not model.doSync  |> Debug.log "DO SYNC (1)"
 
             else
-                model.doSync 
+                model.doSync   |> Debug.log "DO SYNC (1)"
     in
     ( { model | pressedKeys = pressedKeys, doSync = doSync }
     , Cmd.none
@@ -527,33 +527,38 @@ delayCmd delay msg =
 syncLR : Model -> (Model, Cmd Msg )
 syncLR model =
     let
+        _ = Debug.log "SYNC LR" 0
         data =
             if model.foundIdIndex == 0 then
                 let
+                   
                     foundIds_ =
-                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
+                        Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SYNC (search text)") model.editRecord.tree
 
                     id_ =
-                        List.head foundIds_ |> Maybe.withDefault "(nothing)"
+                        List.head foundIds_ |> Maybe.withDefault "(nothing)"  |>  Debug.log "SYNC LR (1)"
                 in
                 { foundIds = foundIds_
                 , foundIdIndex = 1
-                , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+                , cmd = View.Utility.setViewportForElement "scripta-output" id_
                 , selectedId = id_
                 , searchCount = 0
                 }
 
             else
                 let
+                
                     id_ =
-                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)"
+                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)" |>  Debug.log "SYNC LR (2)"
                 in
                 { foundIds = model.foundIds
                 , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
-                , cmd = View.Utility.setViewportForElement "__RENDERED_TEXT__" id_
+                , cmd = View.Utility.setViewportForElement "scripta-output" id_
                 , selectedId = id_
                 , searchCount = model.searchCount + 1
                 }
+        
+        _ = Debug.log "SYNC (Data)" data
     in
     ( { model
         | selectedId = data.selectedId
@@ -571,7 +576,7 @@ syncLR model =
 
 firstSyncLR : Model -> String -> ( Model, Cmd Msg )
 firstSyncLR model searchSourceText =
-   (model, Cmd.none)
+   ({model | message = "SYNC: " ++ searchSourceText}, Cmd.none)
     -- let
     --     data =
     --         let

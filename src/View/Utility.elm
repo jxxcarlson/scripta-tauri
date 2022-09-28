@@ -8,8 +8,8 @@ import Model exposing(Msg(..))
 setViewportForElement : String -> String -> Cmd Msg
 setViewportForElement viewportId elementId =
     Browser.Dom.getViewportOf viewportId
-        |> Task.andThen (\vp -> getElementWithViewPort vp elementId)
-        |> Task.attempt SetViewPortForElement
+        |> Task.andThen (\vp -> getElementWithViewPort vp elementId) 
+        |> Task.attempt SetViewPortForElement |> Debug.log "SYNC (VP)"
 
 
 getElementWithViewPort : Browser.Dom.Viewport -> String -> Task.Task Browser.Dom.Error (Browser.Dom.Element, Browser.Dom.Viewport )

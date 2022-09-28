@@ -144,7 +144,7 @@ displayRenderedText model =
         , scrollbarY
         , htmlId "scripta-output"
         ]
-        (Scripta.API.render (settings model.count) model.editRecord |> List.map (Element.map (RenderMarkupMsg)))
+        (Scripta.API.render (settings model.selectedId model.count) model.editRecord |> List.map (Element.map (RenderMarkupMsg)))
         ]
 
 htmlId : String -> Attribute msg
@@ -152,11 +152,11 @@ htmlId str =
     htmlAttribute (Html.Attributes.id str)
 
 
-settings : a -> { windowWidth : number, counter : a, selectedId : String, selectedSlug : Maybe b, scale : Float }
-settings counter =
+settings : String -> Int -> { windowWidth : number, counter : Int, selectedId : String, selectedSlug : Maybe b, scale : Float }
+settings selectedId_ counter =
     { windowWidth = 500
     , counter = counter
-    , selectedId = "--"
+    , selectedId = selectedId_
     , selectedSlug = Nothing
     , scale = 0.8
     }
