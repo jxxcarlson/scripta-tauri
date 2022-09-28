@@ -2,6 +2,7 @@ module View.Main exposing (view)
 
 import Render.Msg exposing(MarkupMsg(..))
 import Browser
+import Config
 import View.Utility
 import Browser.Dom
 import Scripta.Language exposing(Language(..))
@@ -142,7 +143,7 @@ displayRenderedText model =
         , height (px windowHeight), Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
         , paddingXY 16 32
         , scrollbarY
-        , htmlId "scripta-output"
+        , htmlId Config.renderedTextViewportID
         ]
         (Scripta.API.render (settings model.selectedId model.count) model.editRecord |> List.map (Element.map (RenderMarkupMsg)))
         ]

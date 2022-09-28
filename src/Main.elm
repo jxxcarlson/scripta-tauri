@@ -8,6 +8,7 @@ port module Main exposing (main)
 
 import Render.Msg exposing(MarkupMsg(..))
 import Browser
+import Config
 import View.Main
 import Process
 import View.Utility
@@ -40,6 +41,7 @@ import Browser.Navigation exposing (load)
 import String exposing (toInt)
 import Model exposing(Model, Msg(..), Flags, PopupState(..), SelectionState(..))
 import Keyboard
+import Config
 
 main =
     Browser.element
@@ -123,8 +125,8 @@ init flags =
       , homeDirectory = Nothing
       }
     , Cmd.batch [ 
-            jumpToTop "scripta-output"
-          , jumpToTop "input-text", readPreferences "foo"
+            View.Utility.jumpToTop Config.renderedTextViewportID
+          , View.Utility.jumpToTop "input-text", readPreferences "foo"
           , delayCmd 1 (SetExampleDocument "about.L0")
      ]
 
@@ -216,7 +218,7 @@ update msg model =
                         _ ->
                              { content = Text.nada, name = "nada.L0",  path = "NONE"}
             in
-            model |> loadDocument doc |> (\m -> (m, Cmd.batch [ jumpToTop "scripta-output", jumpToTop "input-text" ]))
+            model |> loadDocument doc |> (\m -> (m, Cmd.batch [ View.Utility.jumpToTop Config.renderedTextViewportID, View.Utility.jumpToTop "input-text" ]))
                
 
 
@@ -373,14 +375,27 @@ update msg model =
         SyncLR ->
             syncLR model
 
-        SetViewPortForElement _ -> (model, Cmd.none)
+        SetViewPortForElement data -> 
+            setViewportForElement model data
 
         KeyMsg keyMsg ->
-            updateKeys model (keyMsg |> Debug.log "KEY")
+            updateKeys model keyMsg
 
         RenderMarkupMsg msg_ ->
             sync model msg_
 
+setViewportForElement : Model -> Result xx (Browser.Dom.Element, Browser.Dom.Viewport ) -> ( Model, Cmd Msg )
+setViewportForElement model result =
+    case result of
+        Ok ( element, viewport ) ->
+            ( model 
+            , View.Utility.setViewPortForSelectedLine element viewport
+            )
+
+        Err _ ->
+            -- TODO: restore error message
+            -- ( { model | message = model.message ++ ", could not set viewport" }, Cmd.none )
+            ( model, Cmd.none )
 
 {-|
 
@@ -391,7 +406,7 @@ sync model msg_ =
     case msg_ of
         SendMeta meta ->
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
-            ( { model | linenumber = meta.begin }, Cmd.none )  |> Debug.log "META"
+            ( { model | linenumber = meta.begin }, Cmd.none )  
 
         SendId line ->
             -- This is the code that highlights a line in the source text when rendered text is clicked.
@@ -404,17 +419,17 @@ sync model msg_ =
         SelectId id ->
             -- the element with this id will be highlighted
             if model.selectionHighLighted == IdSelected id then
-                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, View.Utility.setViewportForElement "scripta-output" id ) |> Debug.log "SELECT (1)"
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, View.Utility.setViewportForElement Config.renderedTextViewportID id ) 
             else
-                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, View.Utility.setViewportForElement "scripta-output" id )  |> Debug.log "SELECT (2)"
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, View.Utility.setViewportForElement Config.renderedTextViewportID id ) 
 
         HighlightId id ->
             -- the element with this id will be highlighted
             if model.selectionHighLighted == IdSelected id then
-                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, Cmd.none )  |> Debug.log "HIGHLIGHT (1)"
+                ( { model | selectedId = "_??_", selectionHighLighted = Unselected }, Cmd.none )  
 
             else
-                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, Cmd.none )  |> Debug.log "HIGHLIGHT (2)"
+                ( { model | selectedId = id, selectionHighLighted = IdSelected id }, Cmd.none )  
 
         GetPublicDocument _ _ -> (model, Cmd.none)
         GetPublicDocumentFromAuthor _ _ _  -> (model, Cmd.none)
@@ -484,12 +499,6 @@ htmlId str =
     htmlAttribute (Html.Attributes.id str)
 
 
-jumpToTop : String -> Cmd Msg
-jumpToTop id =
-    Browser.Dom.getViewportOf id
-        |> Task.andThen (\info -> Browser.Dom.setViewportOf id 0 0)
-        |> Task.attempt (\_ -> NoOp)
-
 
 
 
@@ -507,14 +516,14 @@ getLanguage dict =
 updateKeys model keyMsg =
     let
         pressedKeys =
-            Keyboard.update keyMsg model.pressedKeys   |> Debug.log "PRESSED KEYS"
+            Keyboard.update keyMsg model.pressedKeys  
 
         doSync =
             if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
-                not model.doSync  |> Debug.log "DO SYNC (1)"
+                not model.doSync 
 
             else
-                model.doSync   |> Debug.log "DO SYNC (1)"
+                model.doSync  
     in
     ( { model | pressedKeys = pressedKeys, doSync = doSync }
     , Cmd.none
@@ -527,20 +536,19 @@ delayCmd delay msg =
 syncLR : Model -> (Model, Cmd Msg )
 syncLR model =
     let
-        _ = Debug.log "SYNC LR" 0
         data =
             if model.foundIdIndex == 0 then
                 let
                    
                     foundIds_ =
-                        Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SYNC (search text)") model.editRecord.tree
+                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
 
                     id_ =
-                        List.head foundIds_ |> Maybe.withDefault "(nothing)"  |>  Debug.log "SYNC LR (1)"
+                        List.head foundIds_ |> Maybe.withDefault "(nothing)"  
                 in
                 { foundIds = foundIds_
                 , foundIdIndex = 1
-                , cmd = View.Utility.setViewportForElement "scripta-output" id_
+                , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
                 , selectedId = id_
                 , searchCount = 0
                 }
@@ -549,16 +557,15 @@ syncLR model =
                 let
                 
                     id_ =
-                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)" |>  Debug.log "SYNC LR (2)"
+                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)" 
                 in
                 { foundIds = model.foundIds
                 , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
-                , cmd = View.Utility.setViewportForElement "scripta-output" id_
+                , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
                 , selectedId = id_
                 , searchCount = model.searchCount + 1
                 }
         
-        _ = Debug.log "SYNC (Data)" data
     in
     ( { model
         | selectedId = data.selectedId
