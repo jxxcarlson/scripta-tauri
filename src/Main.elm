@@ -382,17 +382,24 @@ update msg model =
             render model msg_
 
 
+{-|
 
+  EDITOR SYNCHRONIZATION
+-}
 render : Model -> MarkupMsg -> ( Model, Cmd Msg )
 render model msg_ =
     case msg_ of
-        SendMeta _ ->
+        SendMeta meta ->
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
-            ( model, Cmd.none )
+            ( { model | linenumber = meta.begin }, Cmd.none )
 
         SendId line ->
             -- TODO: the below (using id also for line number) is not a great idea.
-            ( { model | message =  "Line " ++ (line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x + 1) |> String.fromInt) }, Cmd.none )
+            let
+                linenumber = line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x + 1)
+            in
+            
+            ( { model |  linenumber = linenumber,   message =  "Line " ++ (linenumber |> String.fromInt) }, Cmd.none )
 
         SelectId id ->
             -- the element with this id will be highlighted
@@ -500,14 +507,14 @@ getLanguage dict =
 updateKeys model keyMsg =
     let
         pressedKeys =
-            Keyboard.update keyMsg model.pressedKeys |> Debug.log "pressedKeys"
+            Keyboard.update keyMsg model.pressedKeys 
 
         doSync =
             if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
-                not model.doSync |> Debug.log "doSync (1)"
+                not model.doSync 
 
             else
-                model.doSync |> Debug.log "doSync (2)"
+                model.doSync 
     in
     ( { model | pressedKeys = pressedKeys, doSync = doSync }
     , Cmd.none
