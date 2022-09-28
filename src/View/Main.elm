@@ -114,7 +114,7 @@ editorControls model =
         , scrollbarY
         , width (px 160)
         ]
-        [ View.Button.setDocument "About" "about.L0" model.document.name
+        [ View.Button.setDocument "About" "about.tex" model.document.name
         , el [ paddingXY 0 controlSpacing ] (text "")
         , View.Button.newFile
         , View.Button.openFile
