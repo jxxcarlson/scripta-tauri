@@ -19,6 +19,8 @@ import Element.Font as Font
 import Element.Input as Input
 import View.Button
 import Scripta.API
+import Scripta.API exposing (EditRecord)
+import Model exposing (AppMode(..))
 
 
 view : Model -> Html Msg
@@ -56,6 +58,7 @@ header model = row [paddingXY 20 0
     ]  
   [
      el [] (text <| "Document: " ++ model.document.name)
+     , row [alignRight, spacing 8] [View.Button.setMode model.mode EditorMode, View.Button.setMode model.mode ReaderMode ]
   ]
 
 

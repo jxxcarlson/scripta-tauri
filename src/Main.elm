@@ -39,9 +39,10 @@ import Time
 import List.Extra
 import Browser.Navigation exposing (load)
 import String exposing (toInt)
-import Model exposing(Model, Msg(..), Flags, PopupState(..), SelectionState(..))
+import Model exposing(Model, Msg(..), AppMode(..), Flags, PopupState(..), SelectionState(..))
 import Keyboard
 import Config
+import Model exposing (AppMode)
 
 main =
     Browser.element
@@ -123,6 +124,7 @@ init flags =
       , inputFilename = ""
       , preferences = Dict.empty
       , homeDirectory = Nothing
+      , mode = EditorMode
       }
     , Cmd.batch [ 
             View.Utility.jumpToTop Config.renderedTextViewportID
@@ -383,6 +385,9 @@ update msg model =
 
         RenderMarkupMsg msg_ ->
             sync model msg_
+
+        SetAppMode newMode -> 
+          ({ model | mode = newMode}, Cmd.none)
 
 setViewportForElement : Model -> Result xx (Browser.Dom.Element, Browser.Dom.Viewport ) -> ( Model, Cmd Msg )
 setViewportForElement model result =

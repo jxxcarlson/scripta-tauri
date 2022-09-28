@@ -10,11 +10,12 @@ module View.Button exposing (
             , setLanguage
             , refresh
             , rawExport
+            , setMode
       )
 
 import View.ButtonTemplate
 import Element exposing (..)
-import Model exposing(Model, Msg(..))
+import Model exposing(Model, Msg(..), AppMode(..))
 import PDF
 import Scripta.API
 import Element.Font as Font
@@ -31,6 +32,27 @@ import Scripta.Language exposing (Language(..))
 buttonWidth =
     160
 
+
+setMode : AppMode -> AppMode -> Element Msg
+setMode currentAppMode  newAppMode = 
+    let
+        bg = if currentAppMode == newAppMode then
+                Background.color Color.dullRed 
+             else 
+                Background.color Color.black 
+
+        label = case newAppMode of 
+                  EditorMode -> "Edit"
+                  ReaderMode -> "Read"
+    in
+    
+    View.ButtonTemplate.template
+        { tooltipText = "export raw LaTeX"
+        , tooltipPlacement = below
+        , attributes = [ Font.color white, bg, width (px 60) ]
+        , msg = SetAppMode newAppMode
+        , label = label
+        } 
 
 rawExport :Element Msg
 rawExport = 

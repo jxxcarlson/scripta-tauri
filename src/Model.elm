@@ -1,4 +1,4 @@
-module Model exposing (Model, Msg(..), Flags, PopupState(..), SelectionState(..))
+module Model exposing (Model, AppMode(..), Msg(..), Flags, PopupState(..), SelectionState(..))
 
 import Render.Msg exposing(MarkupMsg(..))
 import Document exposing(Document, SourceTextRecord)
@@ -43,8 +43,10 @@ type alias Model =
     , popupState : PopupState
     , preferences : Dict String String
     , homeDirectory : Maybe HomeDirectory
+    , mode : AppMode
     }
 
+type AppMode = ReaderMode | EditorMode
 
 type SelectionState = Unselected | IdSelected String
 
@@ -96,4 +98,5 @@ type Msg
     | SetViewPortForElement (Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport ))
     | KeyMsg Keyboard.Msg
     | RenderMarkupMsg MarkupMsg
+    | SetAppMode AppMode
 
