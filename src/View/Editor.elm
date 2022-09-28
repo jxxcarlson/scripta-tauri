@@ -1,4 +1,4 @@
-module View.Editor exposing (view, inputCursor)
+module View.Editor exposing (inputCursor, view)
 
 import Document
 import Element as E exposing (Element)
@@ -9,8 +9,8 @@ import Html
 import Html.Attributes as HtmlAttr
 import Html.Events
 import Json.Decode
+import Model exposing (AppMode(..), Model, Msg(..))
 import View.Geometry as Geometry
-import Model exposing(Model, Msg(..), AppMode(..))
 
 
 view : Model -> Element Msg
@@ -24,10 +24,13 @@ view model =
         --
         , htmlId "editor-here"
         , E.width (E.px 550)
-        , E.height (E.px (Geometry.appHeight))
-        , case model.mode of 
-           EditorMode -> E.width (E.px (Geometry.editorWidth))
-           ReaderMode -> E.width (E.px 0)
+        , E.height (E.px Geometry.appHeight)
+        , case model.mode of
+            EditorMode ->
+                E.width (E.px Geometry.editorWidth)
+
+            ReaderMode ->
+                E.width (E.px 0)
         , Background.color (E.rgb255 0 68 85)
         , Font.color (E.rgb 0.85 0.85 0.85)
         , Font.size 12
@@ -60,7 +63,7 @@ stringOfBool bool =
 
 inputCursor : { position : Int, source : String } -> Model -> ( Model, Cmd Msg )
 inputCursor { position, source } model =
-        ( model, Cmd.none )
+    ( model, Cmd.none )
 
 
 htmlId str =

@@ -1,17 +1,14 @@
 module View.Geometry exposing
-    (
-      editorWidth
-      , appHeight
-   
+    ( appHeight
+    , editorWidth
     )
 
+import Model exposing (Model)
 
-import Model exposing(Model)
 
+appHeight =
+    700
 
-appHeight = 700
 
 editorWidth =
     500
-
-

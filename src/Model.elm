@@ -1,21 +1,18 @@
-module Model exposing (Model, AppMode(..), Msg(..), Flags, PopupState(..), SelectionState(..))
+module Model exposing (AppMode(..), Flags, Model, Msg(..), PopupState(..), SelectionState(..))
 
-import Render.Msg exposing(MarkupMsg(..))
-import Document exposing(Document, SourceTextRecord)
 import Browser.Dom
-import Scripta.API
-import PDF exposing (PDFMsg(..))
-import Scripta.Language exposing (Language(..))
-import Time
-import Dict exposing(Dict)
-import Keyboard
-
+import Dict exposing (Dict)
+import Document exposing (Document, SourceTextRecord)
 import Html exposing (Html)
 import Http
-
 import Json.Decode
-import Document exposing (SourceTextRecord)
 import Keyboard
+import PDF exposing (PDFMsg(..))
+import Render.Msg exposing (MarkupMsg(..))
+import Scripta.API
+import Scripta.Language exposing (Language(..))
+import Time
+
 
 type alias Model =
     { count : Int
@@ -29,7 +26,7 @@ type alias Model =
     , selectionHighLighted : SelectionState
     , foundIds : List String
     , pressedKeys : List Keyboard.Key
-    , documentNeedsSaving: Bool
+    , documentNeedsSaving : Bool
     , inputFilename : String
     , newFilename : String
     , editRecord : Scripta.API.EditRecord
@@ -46,20 +43,31 @@ type alias Model =
     , mode : AppMode
     }
 
-type AppMode = ReaderMode | EditorMode
 
-type SelectionState = Unselected | IdSelected String
+type AppMode
+    = ReaderMode
+    | EditorMode
 
-type HomeDirectory = DesktopDir | DocumentsDir 
-type PopupState = NewDocumentWindowOpen | NoPopups
+
+type SelectionState
+    = Unselected
+    | IdSelected String
+
+
+type HomeDirectory
+    = DesktopDir
+    | DocumentsDir
+
+
+type PopupState
+    = NewDocumentWindowOpen
+    | NoPopups
+
 
 type DocumentType
     = InfoDocument
     | TestDocument
     | Example
-
-
-
 
 
 type alias Flags =
@@ -100,4 +108,3 @@ type Msg
     | RenderMarkupMsg MarkupMsg
     | SetAppMode AppMode
     | Reload Document
-

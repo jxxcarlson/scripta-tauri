@@ -1,30 +1,32 @@
-module View.Button exposing (
-            printToPDF
-            , tarFile
-            , setDocument
-            , newFile
-            , createFile
-            , cancelNewFile
-            , openFile
-            , saveDocument
-            , setLanguage
-            , refresh
-            , rawExport
-            , setMode
-      )
+module View.Button exposing
+    ( cancelNewFile
+    , createFile
+    , newFile
+    , openFile
+    , printToPDF
+    , rawExport
+    , refresh
+    , saveDocument
+    , setDocument
+    , setLanguage
+    , setMode
+    , tarFile
+    )
 
-import View.ButtonTemplate
+import Color
+import Document exposing (Document)
 import Element exposing (..)
-import Model exposing(Model, Msg(..), AppMode(..))
-import PDF
-import Scripta.API
-import Element.Font as Font
-import Document exposing(Document)
 import Element.Background as Background
 import Element.Events
-import Color
+import Element.Font as Font
 import Html.Attributes
+import Model exposing (AppMode(..), Model, Msg(..))
+import PDF
+import Scripta.API
 import Scripta.Language exposing (Language(..))
+import View.ButtonTemplate
+
+
 
 -- BUTTONS
 
@@ -34,38 +36,45 @@ buttonWidth =
 
 
 setMode : AppMode -> AppMode -> Element Msg
-setMode currentAppMode  newAppMode = 
+setMode currentAppMode newAppMode =
     let
-        bg = if currentAppMode == newAppMode then
-                Background.color Color.dullRed 
-             else 
-                Background.color Color.black 
+        bg =
+            if currentAppMode == newAppMode then
+                Background.color Color.dullRed
 
-        label = case newAppMode of 
-                  EditorMode -> "Edit"
-                  ReaderMode -> "Read"
+            else
+                Background.color Color.black
+
+        label =
+            case newAppMode of
+                EditorMode ->
+                    "Edit"
+
+                ReaderMode ->
+                    "Read"
     in
-    
     View.ButtonTemplate.template
         { tooltipText = "export raw LaTeX"
         , tooltipPlacement = below
         , attributes = [ Font.color white, bg, width (px 60) ]
         , msg = SetAppMode newAppMode
         , label = label
-        } 
+        }
 
-rawExport :Element Msg
-rawExport = 
+
+rawExport : Element Msg
+rawExport =
     View.ButtonTemplate.template
         { tooltipText = "export raw LaTeX"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = RawExport
         , label = "Raw"
-        }    
+        }
 
-refresh :Element Msg
-refresh = 
+
+refresh : Element Msg
+refresh =
     View.ButtonTemplate.template
         { tooltipText = "Recompile source text"
         , tooltipPlacement = below
@@ -74,9 +83,10 @@ refresh =
         , label = "Refresh"
         }
 
+
 setLanguage : Language -> Language -> Element Msg
-setLanguage currentLanguage newLanguage = 
-   let
+setLanguage currentLanguage newLanguage =
+    let
         bgColor =
             if currentLanguage == newLanguage then
                 darkRed
@@ -84,12 +94,19 @@ setLanguage currentLanguage newLanguage =
             else
                 gray
 
-        labelName = case newLanguage of 
-          L0Lang -> "L0"
-          MicroLaTeXLang -> "MicroLaTeX"
-          XMarkdownLang -> "XMarkdown"
-          _ -> "??"
+        labelName =
+            case newLanguage of
+                L0Lang ->
+                    "L0"
 
+                MicroLaTeXLang ->
+                    "MicroLaTeX"
+
+                XMarkdownLang ->
+                    "XMarkdown"
+
+                _ ->
+                    "??"
     in
     View.ButtonTemplate.template
         { tooltipText = "Set markup language"
@@ -99,11 +116,12 @@ setLanguage currentLanguage newLanguage =
         , label = labelName
         }
 
+
 printToPDF : Model -> Element Msg
 printToPDF model =
     case model.printingState of
         PDF.PrintWaiting ->
-            View.ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export PDF" , Font.color Color.black] PrintToPDF "PDF"
+            View.ButtonTemplate.simpleTemplate [ width (px buttonWidth), elementAttribute "title" "Export PDF", Font.color Color.black ] PrintToPDF "PDF"
 
         PDF.PrintProcessing ->
             el [ Font.size 14, padding 8, height (px 30), Background.color Color.blue ] (text "Please wait ...")
@@ -163,8 +181,9 @@ setDocument labelName documentName currentDocumentName =
         , label = labelName
         }
 
-newFile :  Element Msg
-newFile  =
+
+newFile : Element Msg
+newFile =
     View.ButtonTemplate.template
         { tooltipText = "Make new file"
         , tooltipPlacement = below
@@ -173,8 +192,9 @@ newFile  =
         , label = "New"
         }
 
-createFile :  Element Msg
-createFile  =
+
+createFile : Element Msg
+createFile =
     View.ButtonTemplate.template
         { tooltipText = "Create new file"
         , tooltipPlacement = below
@@ -183,8 +203,9 @@ createFile  =
         , label = "Create"
         }
 
-cancelNewFile :  Element Msg
-cancelNewFile  =
+
+cancelNewFile : Element Msg
+cancelNewFile =
     View.ButtonTemplate.template
         { tooltipText = "Cancel new file"
         , tooltipPlacement = below
@@ -193,10 +214,12 @@ cancelNewFile  =
         , label = "Cancel"
         }
 
+
 openFile : Element Msg
 openFile =
     let
-        foo = 1
+        foo =
+            1
     in
     View.ButtonTemplate.template
         { tooltipText = "Open document"
@@ -204,11 +227,14 @@ openFile =
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = ListDirectory "scripta"
         , label = "Open"
-        }        
+        }
+
+
 saveDocument : Document -> Element Msg
 saveDocument document =
     let
-        foo = 1
+        foo =
+            1
     in
     View.ButtonTemplate.template
         { tooltipText = "Save docuemnt"
@@ -217,9 +243,6 @@ saveDocument document =
         , msg = SendDocument
         , label = "Save"
         }
-
-
-
 
 
 darkRed : Color
@@ -234,4 +257,3 @@ gray =
 
 white =
     rgb255 255 255 255
-

@@ -1,13 +1,17 @@
-module Text exposing (about, l0Demo, microLaTeXDemo, testFile, xMarkdown, nada)
+module Text exposing (about, l0Demo, microLaTeXDemo, nada, testFile, xMarkdown)
 
-nada = """
+
+nada =
+    """
 | title
 Oops
 
 Sorry, no such document
 """
 
-about = """
+
+about =
+    """
 
 | title
 Scripta Desktop
@@ -75,7 +79,6 @@ version.  The software is open source; please see this [link github repo https:/
 """
 
 
-
 microLaTeXDemoOLD =
     """
 \\title{Demo (MicroLaTeX)}
@@ -136,8 +139,6 @@ $$
 [bold Tip:] Click on a section title to go back to the table of contents.
 
 """
-
-
 
 
 xMarkdown =
@@ -255,7 +256,8 @@ Here is the source text:
 """
 
 
-microLaTeXDemo = """
+microLaTeXDemo =
+    """
 \\title{MicroLaTeX Demo}
 
 
@@ -330,6 +332,7 @@ are all set.  If not, you can use a hosting service such as
 \\link{imgbb.com https://imgbb.com/} to upload your images.  Like most such services, imgbb has a free tier.
 
 """
+
 
 testFile1 =
     """

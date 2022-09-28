@@ -1,3 +1,5 @@
 module Config exposing (renderedTextViewportID)
 
-renderedTextViewportID = "scripta-output"
+
+renderedTextViewportID =
+    "scripta-output"

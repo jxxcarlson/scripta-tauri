@@ -1,36 +1,56 @@
-module Document exposing (Document, SourceTextRecord, default, updateContent, language)
+module Document exposing (Document, SourceTextRecord, default, language, updateContent)
 
-import Scripta.Language exposing (Language(..))
 import List.Extra
+import Scripta.Language exposing (Language(..))
 
-type alias Document = { content : String
-                      , name : String
-                      , path : String
-                      }
+
+type alias Document =
+    { content : String
+    , name : String
+    , path : String
+    }
+
 
 type alias SourceTextRecord =
     { position : Int, source : String }
 
+
 language : Document -> Language
-language doc = 
-  let
-    ext = case List.Extra.unconsLast (String.split "." doc.name) of 
-      Nothing -> "unknown"
-      Just (ext_, _)-> ext_
-  in
-  case ext of 
-    "L0" -> L0Lang
-    "md" -> XMarkdownLang
-    "tex" -> MicroLaTeXLang
-    _ -> MicroLaTeXLang
+language doc =
+    let
+        ext =
+            case List.Extra.unconsLast (String.split "." doc.name) of
+                Nothing ->
+                    "unknown"
+
+                Just ( ext_, _ ) ->
+                    ext_
+    in
+    case ext of
+        "L0" ->
+            L0Lang
+
+        "md" ->
+            XMarkdownLang
+
+        "tex" ->
+            MicroLaTeXLang
+
+        _ ->
+            MicroLaTeXLang
 
 
 updateContent : String -> Document -> Document
-updateContent str doc = {doc | content = str}
+updateContent str doc =
+    { doc | content = str }
 
-default = { content = defaultText, name = "default.L0", path = "NONE"}
 
-defaultText = """
+default =
+    { content = defaultText, name = "default.L0", path = "NONE" }
+
+
+defaultText =
+    """
 
 | title
 Default

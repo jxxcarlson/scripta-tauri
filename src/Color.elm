@@ -1,5 +1,4 @@
-
-module Color exposing (black ,dullRed, paleGray, jetBlack, red, green, blue, white)
+module Color exposing (black, blue, dullRed, green, jetBlack, paleGray, red, white)
 
 import Element exposing (rgb)
 
@@ -11,14 +10,26 @@ blue =
 white =
     rgb 1 1 1
 
-paleGray = rgb 0.8 0.8 0.8
 
-black = rgb 0.3 0.3 0.3
+paleGray =
+    rgb 0.8 0.8 0.8
 
-jetBlack = rgb 0.0 0.0 0.0
 
-red = rgb 1.0 0.0 0.0
+black =
+    rgb 0.3 0.3 0.3
 
-dullRed = rgb 0.5 0.0 0.0
 
-green = rgb 0.0 1.0 0.0
+jetBlack =
+    rgb 0.0 0.0 0.0
+
+
+red =
+    rgb 1.0 0.0 0.0
+
+
+dullRed =
+    rgb 0.5 0.0 0.0
+
+
+green =
+    rgb 0.0 1.0 0.0
