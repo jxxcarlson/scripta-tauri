@@ -4,6 +4,8 @@ scripts:
 
   build: cargo tauri build # --target universal-apple-darwin
 
+  build-u: cargo tauri build --target universal-apple-darwin
+
   watch: npx elm-watch hot
    
   serve: npx serve public -l 4000
