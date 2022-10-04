@@ -18,7 +18,8 @@ about =
 
 
 
-Scripta Desktop is an app for writing documents in MicroLaTeX, L0, or XMarkdown. Look at the sample documents to get started.  
+Scripta Desktop is an app for writing documents in MicroLaTeX, L0, or XMarkdown. Look at the sample documents to get started,
+or see \\link{Scripta languages https://scripta.io/s/jxxcarlson:scripta-languages}.
 
 What you write in the editor (left window) is rendered instantly as you type.  
 
@@ -40,17 +41,22 @@ Select some source text, then type ctrl-S.  The corresponding
 rendered text will be highlighted.
 
 \\item
-The editor has lots of features: brackets and parenthes are automatically completed, ctrl-A goes to the beginning of the
-current line, ctrl-E to the end.  Type command-F to bring up the
+The editor has lots of features: type ctrl-A to go to the beginning of the
+current line, type ctrl-E to go to the end.  Type command-F to bring up the
 seach-and-replace window (bottom of the editor). Type ESC
-to dismiss the seach-and-replace window.
+to dismiss the seach-and-replace window.  See
+
+\\item Brackets, braces, and parentheses are automatically completed.
+Example: type "(".  The closing parenthesis will be added. Then type
+"foo". Finally, type ")" again to step over the right parenthesis.
+
 
 \\item
 \\strong{Tip.} Click on a section title to go back to the table of contents.
 
 
-This is a pre-release version of Scripta Desktop.  Please write
-to Jim Carlson (jxxcarlson, gmail) with comments and bug reports.
+\\blue{\\italic This is a pre-release version of Scripta Desktop.  Please write
+to Jim Carlson (jxxcarlson, gmail) with comments and bug reports.}}
 
 \\vspace{20}
 
@@ -296,21 +302,11 @@ There are infinitely many primes $p \\equiv 1\\ mod\\ 4$. Isn't that nice?
 Some inline code `a[0] := a[0] + 1`.  A block of code:
 
 ```
-# multiplication table
-  for x in range(1, 11):
-      for y in range(1, 11):
-          print('%d ** %d = %d' % (x, y, x**y)
+for x in range(1, 11):
+    for y in range(1, 11):
+        print('%d ** %d = %d' % (x, y, x**y)
 ```
 
-Here is the source text:
-
-|| code
-```
-# multiplication table
-  for x in range(1, 11):
-      for y in range(1, 11):
-          print('%d ** %d = %d' % (x, y, x**y)
-```
 
 # Bulleted Lists
 
