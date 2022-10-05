@@ -76,30 +76,181 @@ Visit \\link{scripta.io https://scripta.io} for the web version of this app.
 """
 
 
-microLaTeXDemoOLD =
+microLaTeXDemo =
     """
-\\title{Demo (MicroLaTeX)}
 
-| banner
-\\link{Scripta.io https://scripta.io}
+\\title{MicroLaTeX Demo}
+
 
 \\contents
 
-\\section{Images}
+\\section{Preamble}
 
-\\image{https://see.news/wp-content/uploads/2020/12/UK_wildbirds-01-robin.jpg width:400}
+There a some differences between MicroLaTeX and standard
+LaTeX.  Most important is that MicroLaTeX consists of a series
+of blocks. A block is a sequence of nonempty lines 
+bounded above and below by one or more empty lines. A paragraph
+is a block, as is displayed math text or an equation
+environmet. Thus must say
 
-\\section{Math}
+|| code
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
 
-Pythagoras says: $a^2 + b^2 = c^2$
-
-From calculus:
+to obtain 
 
 $$
 \\int_0^1 x^n dx = \\frac{1}{n+1}
 $$
 
-\\strong{Tip:} Click on a section title to go back to the table of contents.
+Note that the double dollar signs occupy a line
+by themselves.  Similarly, we write
+
+\\image{https://i.ibb.co/hfhWFW9/Screen-Shot-2022-10-05-at-1-35-59-PM.png width:350}
+
+to obtain
+
+\\begin{theorem}
+The set of real numbers is uncountable.
+\\end{theorem}
+
+There are also differences in the way lists are handled.
+See section \\ref{lists}.
+
+\\section{Mathematics}
+
+Let $a$, $b$, and $c$ be the sides of a right triangle, where
+$c$ is the hypotenuse.   Then $a^2 + b^2 = c^2$.
+
+This will be on the test:
+
+\\begin{equation}
+\\label{on-the-test}
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+\\end{equation}
+
+
+\\begin{theorem}
+  There are infinitely many prime numbers
+
+  $$
+  p \\equiv 1\\ mod\\ 4
+  $$
+
+  Isn't that nice?
+\\end{theorem}
+
+
+Aligned equations:
+
+\\begin{aligned}
+a &= x + y \\\\
+b &= x - y \\\\
+c &= ab \\\\
+ & = (x + y)(x - y) \\\\
+&= x^2 - y^2
+\\end{aligned}
+
+
+
+\\section{Code}
+
+For inline code, you can enclose text in backticks,
+e.g., say \\bt a[i] := 0 \\bt  to get `a[i] := 0`. For 
+a block of code, use `\\begin{code} ... \\end{code}` to
+enclose the text.  Thus the source text 
+
+\\image{https://i.ibb.co/d5nGNPV/Screen-Shot-2022-10-05-at-1-06-40-PM.png width:300}
+
+yields
+
+\\begin{code}
+# multiplication table
+  for x in range(1, 11):
+      for y in range(1, 11):
+          print('%d * %d = %d' % (x, y, x*y))
+\\end{code}
+
+
+
+\\section{Links}
+\\label{links}
+
+Use 
+
+|| code
+\\link{New York Times https://nytimes.com}
+
+to link to the New York Times:
+
+\\link{New York Times https://nytimes.com}
+
+The standard LaTeX also works:
+
+|| code
+\\href{https://nytimes.com}{New York Times}
+
+\\section{Images}
+
+
+
+Use the model `\\image{web-address}` to place an image.
+
+\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz}
+
+There are options, e.g., you can place a caption with the image:
+
+\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz caption: Cardinal in Winter}
+
+If an image is publically avaialable on the internet, you 
+are all set.  If not, you can use a hosting service such as
+\\link{imgbb.com https://imgbb.com/} to upload your images.  Like most such services, imgbb has a free tier.  If you
+use imgbb, be sure to use the "direct link" option.
+
+
+\\section{Lists}
+\\label{lists}
+
+Lists in MicroLaTeX are a bit different than in standard
+LaTeX.  The source text 
+
+\\image{https://i.ibb.co/0FvdXdL/Screen-Shot-2022-10-05-at-12-50-14-PM.png width:130}
+
+
+renders as
+
+\\item
+Bread
+
+\\item
+Cheese
+
+\\item
+Wine
+
+Note that there is no `\\begin{itemized}` or
+`\\end{itemized}`.  Note also that the text of
+the item begins on a line directly below the code `\\item`.
+However, when a MicroLaTeX document is exported to standard
+LaTeX, it will be exported in the expected standard form.
+
+Numbered lists are treated in a similar style:
+
+\\image{https://i.ibb.co/zRzpPFq/Screen-Shot-2022-10-05-at-12-56-28-PM.png width:130}
+
+\\numbered
+Bread
+
+\\numbered
+Cheese
+
+\\numbered
+Wine
+
+
+
+
 """
 
 l0Demo = 
@@ -337,84 +488,6 @@ for x in range(1, 11):
     . Ho ho ho!
 
     . Ha ha!
-"""
-
-
-microLaTeXDemo =
-    """
-\\title{MicroLaTeX Demo}
-
-
-\\contents
-
-\\section{Mathematics}
-
-Let $a$, $b$, and $c$ be the sides of a right triangle, where
-$c$ is the hypotenuse.   Then $a^2 + b^2 = c^2$.
-
-This will be on the test:
-
-\\begin{equation}
-\\label{on-the-test}
-\\int_0^1 x^n dx = \\frac{1}{n+1}
-\\end{equation}
-
-
-\\begin{theorem}
-  There are infinitely many prime numbers
-
-  $$
-  p \\equiv 1\\ mod\\ 4
-  $$
-
-  Isn't that nice?
-\\end{theorem}
-
-
-Aligned equations:
-
-\\begin{aligned}
-a &= x + y \\\\
-b &= x - y \\\\
-c &= ab \\\\
- & = (x + y)(x - y) \\\\
-&= x^2 - y^2
-\\end{aligned}
-
-
-
-\\section{Code}
-
-
-Use a `\\begin{code} ... \\end{code}`, as in the below. 
-
-
-\\begin{code}
-# multiplication table
-  for x in range(1, 11):
-      for y in range(1, 11):
-          print('%d * %d = %d' % (x, y, x*y))
-\\end{code}
-
-
-
-
-\\section{Images}
-
-
-
-Use the model `\\image{web-address}` to place an image.
-
-\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz}
-
-There are options, e.g., you can place a caption with the image:
-
-\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz caption: Cardinal in Winter}
-
-If an image is publically avaialable on the internet, you 
-are all set.  If not, you can use a hosting service such as
-\\link{imgbb.com https://imgbb.com/} to upload your images.  Like most such services, imgbb has a free tier.
-
 """
 
 
