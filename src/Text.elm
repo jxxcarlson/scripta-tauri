@@ -55,7 +55,7 @@ Example: type "(".  The closing parenthesis will be added. Then type
 \\strong{Tip.} Click on a section title to go back to the table of contents.
 
 
-\\blue{\\italic This is a pre-release version of Scripta Desktop.  Please write
+\\blue{\\italic{This is a pre-release version of Scripta Desktop.  Please write
 to Jim Carlson (jxxcarlson, gmail) with comments and bug reports.}}
 
 \\vspace{20}
