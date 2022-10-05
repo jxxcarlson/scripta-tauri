@@ -6,6 +6,11 @@ scripts:
 
   build-u: cargo tauri build --target universal-apple-darwin
 
+  zip: 
+     - cp -r /Applications/scripta-tauri.app .
+     - zip -r scripta-desktop.zip scripta-tauri.app
+     - rm -r scripta-tauri.app
+
   watch: npx elm-watch hot
    
   serve: npx serve public -l 4000
