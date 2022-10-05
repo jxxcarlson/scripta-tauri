@@ -4,7 +4,11 @@ scripts:
 
   build: cargo tauri build # --target universal-apple-darwin
 
-  build-u: cargo tauri build --target universal-apple-darwin
+  build-u: 
+     - cargo tauri build --target universal-apple-darwin
+     - cp -r /Applications/scripta-tauri.app .
+     - zip -r scripta-desktop.zip scripta-tauri.app
+     - rm -r scripta-tauri.app
 
   zip: 
      - cp -r /Applications/scripta-tauri.app .

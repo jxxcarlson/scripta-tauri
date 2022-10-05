@@ -64,7 +64,7 @@ subscriptions model =
 
 
 autosave model =
-    if model.documentNeedsSaving then
+    if model.documentNeedsSaving && model.document.path /= "NONE" then
         ( { model | documentNeedsSaving = False }, sendDocument model.document )
 
     else
