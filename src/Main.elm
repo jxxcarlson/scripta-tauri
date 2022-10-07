@@ -72,7 +72,7 @@ autosave model =
 
 
 
--- PORTS, OUTBOUND
+-- OUTBOUND PORTS (toJS)
 
 
 port readPreferences : String -> Cmd a
@@ -91,7 +91,7 @@ port listDirectory : String -> Cmd a
 
 
 
--- PORTS, INBOUND
+-- INBOUND PORTS (fromJS)
 
 
 port receiveDocument : (Json.Encode.Value -> msg) -> Sub msg
@@ -671,42 +671,3 @@ firstSyncLR model searchSourceText =
     ( { model | message = "SYNC: " ++ searchSourceText }, Cmd.none )
 
 
-
--- let
---     data =
---         let
---             foundIds_ =
---                 Compiler.ASTTools.matchingIdsInAST searchSourceText model.editRecord.tree
---             id_ =
---                 List.head foundIds_ |> Maybe.withDefault "(nothing)"
---         in
---         { foundIds = foundIds_
---         , foundIdIndex = 1
---         , cmd = View.Utility.setViewportForElement (View.Utility.viewId model.popupState) id_
---         , selectedId = id_
---         , searchCount = 0
---         }
--- in
--- ( { model
---     | selectedId = data.selectedId
---     , foundIds = data.foundIds
---     , foundIdIndex = data.foundIdIndex
---     , searchCount = data.searchCount
---     , messages = [ { txt = ("[" ++ adjustId data.selectedId ++ "]") :: List.map adjustId data.foundIds |> String.join ", ", status = MSWhite } ]
---   }
--- , data.cmd
--- )
--- inputText2 : Model -> ( Model, Cmd Msg )
--- inputText2 model =
---   let
---         editRecord =
---             Scripta.API.update model.editRecord model.document.content
---     in
---     ( { model
---         | sourceText = str
---         , editRecord = editRecord
---         , counter = model.counter + 1
---         , documentDirty = True
---       }
---     , Cmd.none
---     )

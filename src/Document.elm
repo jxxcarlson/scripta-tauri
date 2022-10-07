@@ -1,7 +1,8 @@
-module Document exposing (Document, SourceTextRecord, default, language, updateContent)
+module Document exposing (Document, SourceTextRecord, default, language, updateContent, encode)
 
 import List.Extra
 import Scripta.Language exposing (Language(..))
+import Json.Encode as E
 
 
 type alias Document =
@@ -14,6 +15,14 @@ type alias Document =
 type alias SourceTextRecord =
     { position : Int, source : String }
 
+
+encode : Document -> E.Value
+encode doc = 
+  E.object
+    [ ("name", E.string doc.name)
+    , ("path", E.string doc.path)
+    , ("content", E.string doc.content)
+    ]
 
 language : Document -> Language
 language doc =

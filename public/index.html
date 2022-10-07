@@ -101,6 +101,7 @@
       } // sendDefaultPreferences
 ;
 
+    // Send data to Elm: name, path, and contents of document
     app.ports.listDirectory.subscribe((path) => {
       window.__TAURI__.dialog.open().then((filepath) => {
         if (typeof filepath === 'string') {
