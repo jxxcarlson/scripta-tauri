@@ -107,7 +107,7 @@
 ;
 
     // Send data to Elm: name, path, and contents of document
-    app.ports.listDirectory.subscribe((path) => {
+    app.ports.listDirectory.subscribe((whatever) => {
       window.__TAURI__.dialog.open().then((filepath) => {
         if (typeof filepath === 'string') {
           window.__TAURI__.fs.readTextFile(filepath).then((content) => {
