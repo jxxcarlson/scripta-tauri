@@ -6,3 +6,4 @@ node_modules/
 katex/
 freezer/
 dist/
+public_copy/
