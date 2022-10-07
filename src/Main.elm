@@ -82,7 +82,7 @@ port readPreferences : String -> Cmd a
 port setScriptaDirectory : String -> Cmd a
 
 
-port writePreferences : String -> Cmd a
+port writePreferences : Json.Encode.Value -> Cmd a
 
 
 port sendDocument : Json.Encode.Value -> Cmd a
@@ -388,7 +388,7 @@ update msg model =
             in
             { model | popupState = NoPopups, preferences = newPreferences }
                 |> loadDocument { name = newFilename, content = "new document\n", path = "scripta/" ++ newFilename }
-                |> (\m -> ( { m | newFilename = newFilename, documentNeedsSaving = True }, writePreferences preferenceString ))
+                |> (\m -> ( { m | newFilename = newFilename, documentNeedsSaving = True }, writePreferences (encodeStringWithTag "preferences" preferenceString) ))
 
         DocumentReceived result ->
             case result of

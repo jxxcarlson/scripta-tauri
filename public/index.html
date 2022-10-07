@@ -34,6 +34,8 @@
 
     console.log("pi =", pi)
 
+    // PORTS: RECEIVE DATA FROM ELM
+
     app.ports.sendDocument.subscribe(data => {
       console.log("I want to save", data.name);
       console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
@@ -49,7 +51,7 @@
     app.ports.writePreferences.subscribe(data => {
       console.log("SAVING PREFERENCES:", data);
       window.__TAURI__.fs.writeTextFile(
-        { path: '.scripta-preferences.txt', contents: data },
+        { path: '.scripta-preferences.txt', contents: data.preferences },
         {
           dir: window.__TAURI__.fs.BaseDirectory.Desktop
         }
@@ -76,8 +78,11 @@
       .catch(console.error) // just in case i messed up
   });
 
+    //
+    // PORTS: SEND DATA TO ELM
+    //
 
-
+    // Send data to Elm: contents of the preferences file
     const sendPreferences = function () { 
 
         window.__TAURI__.fs.readTextFile('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
