@@ -60,7 +60,7 @@
     });
 
 
-  app.ports.readPreferences.subscribe((path) => {
+  app.ports.readPreferences.subscribe((whatever) => {
   console.log("READ PREFERENCES") 
   window.__TAURI__.fs.exists('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
     .then((exists) => { if (exists) { sendPreferences() } else { sendDefaultPreferences() } })

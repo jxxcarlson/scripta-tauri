@@ -76,7 +76,7 @@ autosave model =
 -- OUTBOUND PORTS (toJS)
 
 
-port readPreferences : String -> Cmd a
+port readPreferences : Json.Encode.Value -> Cmd a
 
 
 port setScriptaDirectory : Json.Encode.Value -> Cmd a
@@ -150,7 +150,7 @@ init flags =
     , Cmd.batch
         [ View.Utility.jumpToTop Config.renderedTextViewportID
         , View.Utility.jumpToTop "input-text"
-        , readPreferences "foo"
+        , readPreferences Json.Encode.null
         , delayCmd 1 (SetExampleDocument "about.tex")
         , setScriptaDirectory Json.Encode.null
         ]
