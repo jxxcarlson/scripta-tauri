@@ -79,7 +79,7 @@ autosave model =
 port readPreferences : String -> Cmd a
 
 
-port setScriptaDirectory : String -> Cmd a
+port setScriptaDirectory : Json.Encode.Value -> Cmd a
 
 
 port writePreferences : Json.Encode.Value -> Cmd a
@@ -152,7 +152,7 @@ init flags =
         , View.Utility.jumpToTop "input-text"
         , readPreferences "foo"
         , delayCmd 1 (SetExampleDocument "about.tex")
-        , setScriptaDirectory "foo"
+        , setScriptaDirectory Json.Encode.null
         ]
     )
 

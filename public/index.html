@@ -67,7 +67,7 @@
     .catch(console.error) // just in case i messed up
   });
 
-  app.ports.setScriptaDirectory.subscribe((path) => {
+  app.ports.setScriptaDirectory.subscribe((whatever) => {
     console.log("setScriptaDirectory") 
     window.__TAURI__.fs.exists('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
       .then((exists) => { if (exists) 
