@@ -10,6 +10,7 @@ import Browser
 import Browser.Dom
 import Browser.Navigation exposing (load)
 import Color
+import Json.Encode
 import Config
 import Dict exposing (Dict)
 import Document exposing (Document)
@@ -65,7 +66,7 @@ subscriptions model =
 
 autosave model =
     if model.documentNeedsSaving && model.document.path /= "NONE" then
-        ( { model | documentNeedsSaving = False }, sendDocument model.document )
+        ( { model | documentNeedsSaving = False }, sendDocument (Document.encode model.document) )
 
     else
         ( model, Cmd.none )
@@ -84,10 +85,10 @@ port setScriptaDirectory : String -> Cmd a
 port writePreferences : String -> Cmd a
 
 
-port sendDocument : Document -> Cmd a
+port sendDocument : Json.Encode.Value -> Cmd a
 
 
-port listDirectory : String -> Cmd a
+port listDirectory : Json.Encode.Value -> Cmd a
 
 
 
@@ -316,7 +317,7 @@ update msg model =
                 path =
                     "scripta/" ++ fileName
             in
-            ( { model | message = "Saved " ++ fileName }, sendDocument doc )
+            ( { model | message = "Saved " ++ fileName }, sendDocument (Document.encode doc) )
 
         -- PORTS
         SendDocument ->
@@ -332,10 +333,10 @@ update msg model =
                 ( { model | message = message, documentNeedsSaving = False }, Cmd.none )
 
             else
-                ( { model | message = message, documentNeedsSaving = False }, sendDocument model.document )
+                ( { model | message = message, documentNeedsSaving = False }, sendDocument (Document.encode model.document) )
 
         ListDirectory dir ->
-            ( model, listDirectory dir )
+            ( model, listDirectory Json.Encode.null )
 
         NewFile ->
             ( { model | popupState = NewDocumentWindowOpen, inputFilename = "", newFilename = "" }, Cmd.none )
@@ -585,6 +586,9 @@ htmlId str =
 
 -- HELPERS
 
+encodeStringWithTag: String -> String -> Json.Encode.Value
+encodeStringWithTag tag str = 
+   Json.Encode.object [ (tag, Json.Encode.string str)]
 
 getLanguage : Dict String String -> Maybe Language
 getLanguage dict =
