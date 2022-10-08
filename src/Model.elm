@@ -92,7 +92,7 @@ type Msg
     | ChangeTarFileState PDF.TarFileState
     | SetLanguage Language
     | SendDocument
-    | ListDirectory String
+    | OpenFile String
     | DocumentReceived (Result Json.Decode.Error Document)
     | PreferencesReceived (Result Json.Decode.Error String)
     | ExportTick Time.Posix

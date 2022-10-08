@@ -232,7 +232,7 @@ openFile =
         { tooltipText = "Open document"
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
-        , msg = ListDirectory "scripta"
+        , msg = OpenFile "scripta"
         , label = "Open"
         }
 

@@ -66,7 +66,7 @@ subscriptions model =
 
 autosave model =
     if model.documentNeedsSaving && model.document.path /= "NONE" then
-        ( { model | documentNeedsSaving = False }, sendDocument (Document.encode model.document) )
+        ( { model | documentNeedsSaving = False }, writeDocument (Document.encode model.document) )
 
     else
         ( model, Cmd.none )
@@ -85,10 +85,10 @@ port setScriptaDirectory : Json.Encode.Value -> Cmd a
 port writePreferences : Json.Encode.Value -> Cmd a
 
 
-port sendDocument : Json.Encode.Value -> Cmd a
+port writeDocument : Json.Encode.Value -> Cmd a
 
 
-port listDirectory : Json.Encode.Value -> Cmd a
+port openFile : Json.Encode.Value -> Cmd a
 
 
 
@@ -317,7 +317,7 @@ update msg model =
                 path =
                     "scripta/" ++ fileName
             in
-            ( { model | message = "Saved " ++ fileName }, sendDocument (Document.encode doc) )
+            ( { model | message = "Saved " ++ fileName }, writeDocument (Document.encode doc) )
 
         -- PORTS
         SendDocument ->
@@ -333,10 +333,10 @@ update msg model =
                 ( { model | message = message, documentNeedsSaving = False }, Cmd.none )
 
             else
-                ( { model | message = message, documentNeedsSaving = False }, sendDocument (Document.encode model.document) )
+                ( { model | message = message, documentNeedsSaving = False }, writeDocument (Document.encode model.document) )
 
-        ListDirectory dir ->
-            ( model, listDirectory Json.Encode.null )
+        OpenFile dir ->
+            ( model, openFile Json.Encode.null )
 
         NewFile ->
             ( { model | popupState = NewDocumentWindowOpen, inputFilename = "", newFilename = "" }, Cmd.none )

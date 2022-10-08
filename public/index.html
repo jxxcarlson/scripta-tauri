@@ -36,7 +36,7 @@
 
     // PORTS: RECEIVE DATA FROM ELM
 
-    app.ports.sendDocument.subscribe(data => {
+    app.ports.writeDocument.subscribe(data => {
       console.log("I want to save", data.name);
       console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
       window.__TAURI__.fs.writeTextFile(
@@ -107,12 +107,11 @@
 ;
 
     // Send data to Elm: name, path, and contents of document
-    app.ports.listDirectory.subscribe((whatever) => {
+    app.ports.openFile.subscribe((whatever) => {
       window.__TAURI__.dialog.open().then((filepath) => {
         if (typeof filepath === 'string') {
           window.__TAURI__.fs.readTextFile(filepath).then((content) => {
             console.log("FILEPATH", filepath)
-            // console.log("CONTENT", content)
             app.ports.receiveDocument.send({name: filepath, path: filepath, content: content});
           })
         } else {
