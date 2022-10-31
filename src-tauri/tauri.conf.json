@@ -6,7 +6,7 @@
     "distDir": "../public",
     "withGlobalTauri": true
   },
-  "package": {`
+  "package": {
     "productName": "scripta-desktop",
     "version": "0.5.5"
   },
