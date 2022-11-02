@@ -8,19 +8,12 @@ port module Main exposing (main)
 
 import Browser
 import Browser.Dom
-import Browser.Navigation exposing (load)
-import Color
 import Json.Encode
 import Config
 import Dict exposing (Dict)
 import Document exposing (Document)
 import Element exposing (..)
-import Element.Background as Background
-import Element.Events
-import Element.Font as Font
-import Element.Input as Input
 import File.Download
-import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import Http
