@@ -22,6 +22,9 @@ scripts:
      - zip -r scripta-desktop.zip scripta-tauri.app
      - rm -r scripta-tauri.app
 
+  vendor:
+      cp -r ../scripta-compiler/src/* vendor/compiler
+
   watch: npx elm-watch hot
    
   serve: npx serve public -l 4000
