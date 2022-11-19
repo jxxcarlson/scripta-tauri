@@ -69,186 +69,321 @@ a pure  functional language designed for building web apps, with
 \\link{Scritpa Desktop app https://github.com/jxxcarlson/scripta-tauri} are open source.
 
 Visit \\link{scripta.io https://scripta.io} for the web version of this app.
-
-
-
-
 """
 
 
-microLaTeXDemo =
-    """
+microLaTeXDemo = """
+\\title{MicroLaTeX Guide}
 
-\\title{MicroLaTeX Demo}
+| banner
+\\ilink{Scripta.io jxxcarlson:system-home}
 
 
 \\contents
 
-\\section{Preamble}
+\\tags{pin, jxxcarlson:microlatex-guide}
 
-There a some differences between MicroLaTeX and standard
-LaTeX.  Most important is that MicroLaTeX consists of a series
-of blocks. A block is a sequence of nonempty lines 
-bounded above and below by one or more empty lines. A paragraph
-is a block, as is displayed math text or an equation
-environmet. Thus must say
+\\section{What is MicroLaTeX?}
 
-|| code
+
+MicroLaTeX is a variant of LaTeX with a frictionless workflow and no-setup, interactive, real-time editing.  It is not a replacement
+for LaTeX and cannot use the vast LaTeX package ecosystem.
+But for many kinds of documents — class notes, problem sets,
+etc., it can be an excellent choice.  Consider \\link{this example https://scripta.io/s/jxxcarlson:wave-packets-dispersion} at
+\\link{Scripta.io https://scripta.io}, the web version of this app.
+
+
+
+
+\\section{Before you start}
+
+MicroLaTeX is \\term{block-structured}, a feature
+which makes error-handling robust. A block is normally
+a contiguous sequence of non-empty lines with at least
+one empty line above and below.  An ordinary
+paragraph is a block, and so is the text
+
+\\image{https://d.img.vision/scripta/653375022-image.png width:300}
+
+which renders like this:
+
 $$
 \\int_0^1 x^n dx = \\frac{1}{n+1}
 $$
 
-to obtain 
 
-$$
-\\int_0^1 x^n dx = \\frac{1}{n+1}
-$$
+Always use the above format for display math, with the
+\\dollarSign{}\\dollarSign{} symbols on
+lines of their own. Always
+put blank lines above and below a block.
 
-Note that the double dollar signs occupy a line
-by themselves.  Similarly, we write
-
-\\image{https://i.ibb.co/hfhWFW9/Screen-Shot-2022-10-05-at-1-35-59-PM.png width:350}
-
-to obtain
+LaTeX environments, which are also blocks, work
+pretty much as expected:
 
 \\begin{theorem}
-The set of real numbers is uncountable.
+There are infinitely many primes
+$p\\equiv 1\\ \\text{mod}\\ 4$.
+Isn't that nice?
 \\end{theorem}
 
-There are also differences in the way lists are handled.
-See section \\ref{lists}.
+Here is the source code:
 
-\\section{Mathematics}
+\\image{https://d.img.vision/scripta/2585504525-image.png width:300}
 
-Let $a$, $b$, and $c$ be the sides of a right triangle, where
-$c$ is the hypotenuse.   Then $a^2 + b^2 = c^2$.
 
-This will be on the test:
+Note how the fragments `\\begin{theorem}` and `\\end{theorem}`
+are placed as lines by themselves, just as \\dollarSign{}\\dollarSign{} was.  Again, there is at least one blank line above
+a block and at least one below.
+
+Blocks (environments) can be nested:
+
+
+\\image{https://i.ibb.co/qYPk1rN/image.png width:300}
+
+Here is the result:
+
+
+
+\\begin{theorem}
+There are infinitely many primes
 
 \\begin{equation}
-\\label{on-the-test}
-\\int_0^1 x^n dx = \\frac{1}{n+1}
+p\\equiv 1\\ \\text{mod}\\ 4.
 \\end{equation}
 
-
-\\begin{theorem}
-  There are infinitely many prime numbers
-
-  $$
-  p \\equiv 1\\ mod\\ 4
-  $$
-
-  Isn't that nice?
+Isn't that nice?
 \\end{theorem}
 
 
-Aligned equations:
+You can, of course, use double dollar signs:
 
-\\begin{aligned}
-a &= x + y \\\\
-b &= x - y \\\\
-c &= ab \\\\
- & = (x + y)(x - y) \\\\
-&= x^2 - y^2
-\\end{aligned}
+\\image{https://i.ibb.co/92qWw8n/image.png width:360}
+
+\\begin{theorem}
+There are also infinitely many primes satisfying
+
+$$
+p\\equiv 1\\ \\text{mod}\\ 8.
+$$
+
+Very nice too!
+\\end{theorem}
 
 
 
-\\section{Code}
 
-For inline code, you can enclose text in backticks,
-e.g., say \\bt a[i] := 0 \\bt  to get `a[i] := 0`. For 
-a block of code, use `\\begin{code} ... \\end{code}` to
-enclose the text.  Thus the source text 
 
-\\image{https://i.ibb.co/d5nGNPV/Screen-Shot-2022-10-05-at-1-06-40-PM.png width:300}
+
+\\section{Basics}
+
+
+Text-mode macros work in the usual way: \\term_{macros, text mode}
+\\term_{italic} \\term_{bold} \\term_{bold-italic}
+
+\\begin{indent}
+\\italic{Italic text}, \\bold{bold text},
+and \\bold{\\italic{bold-italic text}}.
+\\end{indent}
+
+|| code
+\\italic{Italic text}, \\bold{bold text},
+and \\bold{\\italic{bold-italic text}}.
+
+You can use \\bs{emph} \\term_{emph} instead of \\bs{italic}.
+Text-mode environments also work as expected: \\term_{environment, text-mode}
+\\term_{environment, theorem}
+\\vspace{15}
+
+
+  \\begin{theorem}
+  There are infinitely many primes.
+  \\end{theorem}
+
+|| code
+\\begin{theorem}
+There are infinitely many primes.
+\\end{theorem}
+
+Math mode, \\term_{math mode} both inline
+\\term_{math mode, inline} and display, works in the usual way.
+The text `$a^2 + b^2 + c^2$` yields $a^2 + b^2 + c^2$.  The text
+
+\\begin{code}
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
+\\end{code}
 
 yields
 
-\\begin{code}
-# multiplication table
-  for x in range(1, 11):
-      for y in range(1, 11):
-          print('%d * %d = %d' % (x, y, x*y))
-\\end{code}
+$$
+\\int_0^1 x^n dx = \\frac{1}{n+1}
+$$
+
+
+Math-mode macros are defined like this \\term_{macros, math mode}
+\\vspace{10}
+
+\\image{https://d.img.vision/scripta/3131867526-image.png width:300}
+
+\\begin{mathmacros}
+\\newcommand{\\bra}{\\langle}
+\\newcommand{\\ket}{\\rangle}
+\\newcommand{\\vpipe}{\\ |\\ }
+\\newcommand{\\set}[1]{\\{#1\\}}
+\\end{mathmacros}
+
+
+Then you can say `$\\bra x \\vpipe y \\ket$` to obtain $\\bra x \\vpipe y \\ket$.
 
 
 
 \\section{Links}
-\\label{links}
 
-Use 
+To link to a web page, follow this template:
 
 || code
-\\link{New York Times https://nytimes.com}
+ \\link{New York Times https://nytimes.com}
 
-to link to the New York Times:
+Here it is in use:
 
-\\link{New York Times https://nytimes.com}
+| indent
+I usually read the \\link{New York Times https://nytimes.com} while
+eating breakfast.  You can use \\bs{href} also.
+\\term_{links} \\term_{href}
 
-The standard LaTeX also works:
+You can also use the standard \\bs{href}:
 
 || code
 \\href{https://nytimes.com}{New York Times}
 
+| indent
+\\href{https://nytimes.com}{New York Times}
+
+
 \\section{Images}
 
 
+The basic form:
 
-Use the model `\\image{web-address}` to place an image.
+|| code
+\\image{URL}
+
+where URL might be `http://image.gov.birds/cardinal.jpg`
+
+Here is an example that follows the form:
 
 \\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz}
 
-There are options, e.g., you can place a caption with the image:
+To add a caption, use this model:
 
-\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz caption: Cardinal in Winter}
+|| code
+\\image{URL caption:THE CAPTION TEXT}
 
-If an image is publically avaialable on the internet, you 
-are all set.  If not, you can use a hosting service such as
-\\link{imgbb.com https://imgbb.com/} to upload your images.  Like most such services, imgbb has a free tier.  If you
-use imgbb, be sure to use the "direct link" option.
+\\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz caption:Cardinal in Winter}
 
+If an image exists on the internet, you are all set.
+If not, you can use an image hosting service like
+\\link{imgbb.com https://imgbb.com/}.  It has both free
+and paid tiers.
 
-\\section{Lists}
-\\label{lists}
+\\section{Code}
 
-Lists in MicroLaTeX are a bit different than in standard
-LaTeX.  The source text 
+Inline code is written in Markdown style, e.g.,
 
-\\image{https://i.ibb.co/0FvdXdL/Screen-Shot-2022-10-05-at-12-50-14-PM.png width:130}
+|| code
+This is some code: `a = {foo: 1, bar: 2}`.
 
+This text renders as:
 
-renders as
+| indent
+This is some code: `a = {foo: 1, bar: 2}`.
 
-\\item
-Bread
+Here is some block code:
 
-\\item
-Cheese
+\\image{https://i.ibb.co/tJkzFxk/image.png width:220}
 
-\\item
-Wine
+It renders like this:
 
-Note that there is no `\\begin{itemized}` or
-`\\end{itemized}`.  Note also that the text of
-the item begins on a line directly below the code `\\item`.
-However, when a MicroLaTeX document is exported to standard
-LaTeX, it will be exported in the expected standard form.
+\\begin{code}
+numbers = range(1,20)
 
-Numbered lists are treated in a similar style:
-
-\\image{https://i.ibb.co/zRzpPFq/Screen-Shot-2022-10-05-at-12-56-28-PM.png width:130}
-
-\\numbered
-Bread
-
-\\numbered
-Cheese
-
-\\numbered
-Wine
+for i in numbers:
+  print(i, i**2)
+\\end{code}
 
 
+
+
+
+\\bold{Note.} The blank line separating the first and third
+lines of the above example is not empty.  It contains one
+space.  MicroLaTeX is a block-style language.  A block
+consists of a sequence of nonempty lines with an empty
+line before and after. Again: a \\term{blank line}
+is different from and \\term{empty line}.
+
+\\section{More on math mode}
+
+For numbered equations, use the \\italic{equation} environment
+\\term_{environment, equation}:
+
+
+\\image{https://i.ibb.co/BBSC61g/image.png width:270}
+
+It renders like this:
+
+
+\\begin{equation}
+\\label{improper-integral}
+\\int_0^\\infty e^{-x} dx = 1
+\\end{equation}
+
+
+
+
+
+Note the use of \\bs{label}.  One refers to this text
+via `\\eqref{improper-integral}`: rendered as
+the active link \\eqref{improper-integral}.
+
+For lists of
+equations, used the \\italic{aligned} environment
+\\term_{environment, aligned}:
+
+\\begin{code}
+\\begin{aligned}
+a &= x + y \\\\
+b &= x - y \\\\
+ab &= (x + y)(x - y) \\\\
+&= x^2 - y^2
+\\end{aligned}
+\\end{code}
+
+It renders like this:
+
+\\begin{aligned}
+a &= x + y \\\\
+b &= x - y \\\\
+ab &= (x + y)(x - y) \\\\
+&= x^2 - y^2
+\\end{aligned}
+
+
+\\section{Export}
+
+MicroLaTeX documents can be exported \\term_{export, LaTeX}
+\\term{export, PDF} to standard LaTeX
+ready to be run through `pdflatex`, or to PDF.  Use the
+buttons in the footer, lower left.
+
+
+
+
+
+\\section{Index}
+
+| index
 
 
 """
