@@ -1,4 +1,4 @@
-# Scripta-Tauri
+# Scripta Desktop
 
 A desktop app hosting the Scripta compiler 
 (real-time compilation of source text in MicroLaTeX, XMarkdow or L0
