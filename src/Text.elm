@@ -21,9 +21,9 @@ about =
 Scripta Desktop is an app for writing documents in MicroLaTeX, L0, or XMarkdown. Look at the sample documents to get started,
 or see \\link{Scripta languages https://scripta.io/s/jxxcarlson:scripta-languages}.
 
-What you write in the editor (left window) is rendered instantly as you type.  
+What you write in the editor (left window) is rendered instantly as you type.
 
-Documents created with Scripta Desktop can be exported to standard LaTeX or to PDF.  
+Documents created with Scripta Desktop can be exported to standard LaTeX or to PDF.
 
 \\item
 Scripta stores its documents in `Desktop/scripta`.  If this directory does not exist,
@@ -62,10 +62,10 @@ to Jim Carlson (jxxcarlson, gmail) with comments and bug reports.}}
 
 \\large{Technical notes}
 
-Scripta Desktop is written in \\link{Elm https://elm-lang.org}, 
+Scripta Desktop is written in \\link{Elm https://elm-lang.org},
 a pure  functional language designed for building web apps, with
-\\link{Codemirorr https://codemirror.net/} for the text editor, and \\link{KaTeX https://katex.org} for rendering equations. The 
-\\link{Tauri https://tauri.app} framework is used to build the desktop version.  The code for both the \\link{Scripta compiler https://github.com/jxxcarlson/scripta-compiler} and the 
+\\link{Codemirorr https://codemirror.net/} for the text editor, and \\link{KaTeX https://katex.org} for rendering equations. The
+\\link{Tauri https://tauri.app} framework is used to build the desktop version.  The code for both the \\link{Scripta compiler https://github.com/jxxcarlson/scripta-compiler} and the
 \\link{Scritpa Desktop app https://github.com/jxxcarlson/scripta-tauri} are open source.
 
 Visit \\link{scripta.io https://scripta.io} for the web version of this app.
@@ -73,6 +73,7 @@ Visit \\link{scripta.io https://scripta.io} for the web version of this app.
 
 
 microLaTeXDemo = """
+
 \\title{MicroLaTeX Guide}
 
 | banner
@@ -189,37 +190,8 @@ and \\bold{\\italic{bold-italic text}}.
 \\italic{Italic text}, \\bold{bold text},
 and \\bold{\\italic{bold-italic text}}.
 
-You can use \\bs{emph} \\term_{emph} instead of \\bs{italic}.
-Text-mode environments also work as expected: \\term_{environment, text-mode}
-\\term_{environment, theorem}
-\\vspace{15}
-
-
-  \\begin{theorem}
-  There are infinitely many primes.
-  \\end{theorem}
-
-|| code
-\\begin{theorem}
-There are infinitely many primes.
-\\end{theorem}
-
-Math mode, \\term_{math mode} both inline
-\\term_{math mode, inline} and display, works in the usual way.
-The text `$a^2 + b^2 + c^2$` yields $a^2 + b^2 + c^2$.  The text
-
-\\begin{code}
-$$
-\\int_0^1 x^n dx = \\frac{1}{n+1}
-$$
-\\end{code}
-
-yields
-
-$$
-\\int_0^1 x^n dx = \\frac{1}{n+1}
-$$
-
+You can use `\\emph` instead of `\\italic`.
+The usual `\\textit` and `\\textbf` macros also work.
 
 Math-mode macros are defined like this \\term_{macros, math mode}
 \\vspace{10}
@@ -266,8 +238,9 @@ You can also use the standard \\bs{href}:
 
 The basic form:
 
-|| code
+\\begin{code}
 \\image{URL}
+\\end{code}
 
 where URL might be `http://image.gov.birds/cardinal.jpg`
 
@@ -277,8 +250,9 @@ Here is an example that follows the form:
 
 To add a caption, use this model:
 
-|| code
+\\begin{code}
 \\image{URL caption:THE CAPTION TEXT}
+\\end{code}
 
 \\image{https://news.wttw.com/sites/default/files/styles/full/public/field/image/CardinalSnowtlparadisPixabayCrop.jpg?itok=iyp0zGMz caption:Cardinal in Winter}
 
@@ -289,7 +263,7 @@ and paid tiers.
 
 \\section{Code}
 
-Inline code is written in Markdown style, e.g.,
+Inline code is written in Markdown style with backticks e.g.,
 
 || code
 This is some code: `a = {foo: 1, bar: 2}`.
@@ -299,7 +273,7 @@ This text renders as:
 | indent
 This is some code: `a = {foo: 1, bar: 2}`.
 
-Here is some block code:
+Here is how to write block code:
 
 \\image{https://i.ibb.co/tJkzFxk/image.png width:220}
 
@@ -313,15 +287,6 @@ for i in numbers:
 \\end{code}
 
 
-
-
-
-\\bold{Note.} The blank line separating the first and third
-lines of the above example is not empty.  It contains one
-space.  MicroLaTeX is a block-style language.  A block
-consists of a sequence of nonempty lines with an empty
-line before and after. Again: a \\term{blank line}
-is different from and \\term{empty line}.
 
 \\section{More on math mode}
 
@@ -351,40 +316,24 @@ For lists of
 equations, used the \\italic{aligned} environment
 \\term_{environment, aligned}:
 
-\\begin{code}
-\\begin{aligned}
-a &= x + y \\\\
-b &= x - y \\\\
-ab &= (x + y)(x - y) \\\\
-&= x^2 - y^2
-\\end{aligned}
-\\end{code}
+\\image{https://i.ibb.co/nC80stz/image.png width:200}
 
 It renders like this:
 
 \\begin{aligned}
-a &= x + y \\\\
-b &= x - y \\\\
-ab &= (x + y)(x - y) \\\\
+a &= x + y \\
+b &= x - y \\
+ab &= (x + y)(x - y) \\
 &= x^2 - y^2
 \\end{aligned}
 
 
 \\section{Export}
 
-MicroLaTeX documents can be exported \\term_{export, LaTeX}
-\\term{export, PDF} to standard LaTeX
+MicroLaTeX documents can be exported
+to standard LaTeX
 ready to be run through `pdflatex`, or to PDF.  Use the
-buttons in the footer, lower left.
-
-
-
-
-
-\\section{Index}
-
-| index
-
+buttons in the toolbar on the right.
 
 """
 

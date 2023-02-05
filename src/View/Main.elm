@@ -31,26 +31,42 @@ view model =
 mainColumn : Model -> Element Msg
 mainColumn model =
     column mainColumnStyle
-        [ column [ spacing 18, width (px 1200), height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
+        [ column
+            [ spacing 18
+            , case model.mode of
+                EditorMode ->
+                    width (px 1200)
+
+                ReaderMode ->
+                    width (px 600)
+            , height fill
+            , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
+            ]
             [ header model
-            , row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
-                [ View.Editor.view model
-                , case model.mode of
-                    EditorMode ->
-                        Element.none
+            , case model.mode of
+                EditorMode ->
+                    viewInEditMode model
 
-                    ReaderMode ->
-                        Element.column [ width (px 300) ] []
-                , displayRenderedText model
-                , case model.mode of
-                    EditorMode ->
-                        editorControls model
-
-                    ReaderMode ->
-                        readerControls model
-                ]
+                ReaderMode ->
+                    viewInReaderMode model
             , footer model
             ]
+        ]
+
+
+viewInReaderMode model =
+    Element.column []
+        [ displayRenderedText model 600
+
+        --, readerControls model
+        ]
+
+
+viewInEditMode model =
+    row [ spacing 18, height fill, Element.htmlAttribute (Html.Attributes.style "max-height" "100vh") ]
+        [ View.Editor.view model
+        , displayRenderedText model 500
+        , editorControls model
         ]
 
 
@@ -178,20 +194,33 @@ windowHeight =
     700
 
 
-displayRenderedText : Model -> Element Msg
-displayRenderedText model =
-    column [ spacing 8, Font.size 14, alignTop, height (px windowHeight), Element.htmlAttribute (Html.Attributes.style "max-height" "100vh"), scrollbarY, width (px 500) ]
-        [ el [ fontGray 0.9 ] (text "Rendered Text")
+displayRenderedText : Model -> Int -> Element Msg
+displayRenderedText model width_ =
+    column
+        [ spacing 8
+        , Font.size 14
+        , alignTop
+        , height (px windowHeight)
+        , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
+        , scrollbarY
+        , width (px width_)
+        ]
+        [ case model.mode of
+            EditorMode ->
+                el [ fontGray 0.9 ] (text "Rendered Text")
+
+            ReaderMode ->
+                Element.none
         , column
             [ spacing 18
             , Font.size 14
             , Background.color (Element.rgb 1.0 1.0 1.0)
             , case model.mode of
                 EditorMode ->
-                    width (px 500)
+                    width (px width_)
 
                 ReaderMode ->
-                    width (px 500)
+                    width (px width_)
             , height (px windowHeight)
             , Element.htmlAttribute (Html.Attributes.style "max-height" "100vh")
             , paddingXY 16 32
@@ -207,14 +236,33 @@ htmlId str =
     htmlAttribute (Html.Attributes.id str)
 
 
-settings : String -> Int -> { windowWidth : number, counter : Int, selectedId : String, selectedSlug : Maybe b, scale : Float }
+settings :
+    String
+    -> Int
+    ->
+        { windowWidth : number
+        , counter : Int
+        , selectedId : String
+        , selectedSlug : Maybe b
+        , scale : Float
+        , longEquationLimit : Float
+        }
 settings selectedId_ counter =
     { windowWidth = 500
     , counter = counter
     , selectedId = selectedId_
     , selectedSlug = Nothing
     , scale = 0.8
+    , longEquationLimit = longEquationLimit
     }
+
+
+
+-- REFACTOR (TODO) put in Settings
+
+
+longEquationLimit =
+    200
 
 
 inputNewFileName : Model -> Element Msg

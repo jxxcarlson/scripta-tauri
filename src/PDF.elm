@@ -12,6 +12,7 @@ module PDF exposing
 import Http
 import Json.Encode as E
 import Process
+import Render.Settings
 import Scripta.API
 import Task
 import Time
@@ -54,7 +55,7 @@ type TarFileState
     | TarFileReady
 
 
-printCmd : Time.Posix -> Scripta.API.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
+printCmd : Time.Posix -> Render.Settings.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
 printCmd currentTime settings forest =
     Cmd.batch
         [ Process.sleep 30 |> Task.perform (always (ChangePrintingState PrintProcessing))
@@ -62,7 +63,7 @@ printCmd currentTime settings forest =
         ]
 
 
-pdfCmd : Time.Posix -> Scripta.API.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
+pdfCmd : Time.Posix -> Render.Settings.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
 pdfCmd currentTime settings syntaxTree =
     Cmd.batch
         [ Http.request
@@ -77,7 +78,7 @@ pdfCmd currentTime settings syntaxTree =
         ]
 
 
-tarCmd : Time.Posix -> Scripta.API.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
+tarCmd : Time.Posix -> Render.Settings.Settings -> Scripta.API.SyntaxTree -> Cmd PDFMsg
 tarCmd currentTime settings syntaxTree =
     Cmd.batch
         [ Http.request

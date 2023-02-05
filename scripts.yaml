@@ -6,15 +6,20 @@ scripts:
 
   build-si:
     - cargo tauri build --target aarch64-apple-darwin
-    - cp -r /Applications/scripta-tauri.app .
-    - zip -r scripta-desktop.zip scripta-tauri-apple-silicon.app
-    - rm -r scripta-tauri-apple-silicon.app
+    - cp -r /Applications/scripta-desktop.app .
+    - zip -r scripta-desktop-si.zip scripta-desktop.app
+    - rm -r scripta-desktop.app
 
+  build-x86:
+    - cargo tauri build --target x86_64-apple-darwin
+    - cp -r /Applications/scripta-desktop.app .
+    - zip -r scripta-desktop-x86.zip scripta-desktop.app
+    - rm -r scripta-desktop.app
 
   build-u: 
      - cargo tauri build --target universal-apple-darwin
      - cp -r /Applications/scripta-desktop.app .
-     - zip -r scripta-desktop.zip scripta-desktop.app
+     - zip -r scripta-desktop-u.zip scripta-desktop.app
      - rm -r scripta-desktop.app
 
   zip: 
@@ -31,5 +36,6 @@ scripts:
 
   get-dmg: cp /Users/jxxcarlson/dev/lamdera/bluesky/scripta-tauri/src-tauri/target/release/bundle/dmg/scripta-tauri_0.1.0_x64.dmg .
 
+  tauri-update: cargo install tauri-cli
   
 

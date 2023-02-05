@@ -468,7 +468,7 @@ sync model msg_ =
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
             ( { model | linenumber = meta.begin }, Cmd.none )
 
-        SendId line ->
+        SendLineNumber line ->
             -- This is the code that highlights a line in the source text when rendered text is clicked.
             let
                 linenumber =
