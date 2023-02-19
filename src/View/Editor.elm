@@ -19,9 +19,9 @@ view : Model -> Element Msg
 view model =
     Element.Keyed.el
         [ -- RECEIVE INOFRMATION FROM CODEMIRROR
-          E.htmlAttribute onSelectionChange -- receive info from codemirror
-        , E.htmlAttribute onTextChange -- receive info from codemirror
-        , E.htmlAttribute onCursorChange -- receive info from codemirror
+          E.htmlAttribute onSelectionChange
+        , E.htmlAttribute onTextChange
+        , E.htmlAttribute onCursorChange
 
         --
         , htmlId "editor-here"

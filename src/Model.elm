@@ -20,8 +20,10 @@ type alias Model =
     , linenumber : Int
     , editorData : { begin : Int, end : Int }
     , doSync : Bool
+    , selectedText : String
     , foundIdIndex : Int
     , searchSourceText : String
+    , oldSearchSourceText : String
     , searchCount : Int
     , selectedId : String
     , selectionHighLighted : SelectionState
@@ -103,7 +105,7 @@ type Msg
     | InputNewFileName String
     | CreateFile
     | ClosePopup
-    | SyncLR
+    | StartSync
     | SetViewPortForElement (Result Browser.Dom.Error ( Browser.Dom.Element, Browser.Dom.Viewport ))
     | KeyMsg Keyboard.Msg
     | RenderMarkupMsg MarkupMsg

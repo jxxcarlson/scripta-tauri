@@ -115,11 +115,13 @@ init flags =
     ( { count = 0
       , document = { content = Text.about, name = "about.tex", path = "NONE" }
       , initialText = "??????"
+      , selectedText = ""
       , linenumber = 0
       , doSync = False
       , editorData = { begin = 0, end = 0 }
       , foundIdIndex = 0
       , searchSourceText = ""
+      , oldSearchSourceText = "___@@@___"
       , searchCount = 0
       , selectedId = ""
       , selectionHighLighted = Unselected
@@ -211,7 +213,8 @@ update msg model =
             View.Editor.inputCursor { position = position, source = source } model
 
         SelectedText str ->
-            syncLR { model | searchSourceText = str }
+            -- store the text selected in the editor and sent to Elm in the model
+            firstSyncLR { model | searchSourceText = str |> Debug.log "SELECTED TEXT (0)" }
 
         -- InputText { position, source } ->
         --             Frontend.Editor.inputText model { position = position, source = source }
@@ -424,8 +427,8 @@ update msg model =
         Refresh ->
             ( { model | editRecord = Scripta.API.init Dict.empty (Document.language model.document) model.document.content }, Cmd.none )
 
-        SyncLR ->
-            syncLR model
+        StartSync ->
+            startSync model
 
         SetViewPortForElement data ->
             setViewportForElement model data
@@ -464,6 +467,7 @@ rightLeftSyncHelper firstLineNumber numberOfLines =
 
 
 {-| EDITOR SYNCHRONIZATION
+-- TODO: EXAMINE THIS
 -}
 sync : Model -> MarkupMsg -> ( Model, Cmd Msg )
 sync model msg_ =
@@ -607,15 +611,39 @@ updateKeys model keyMsg =
             Keyboard.update keyMsg model.pressedKeys
 
         doSync =
-            if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
+            if
+                List.member Keyboard.Control pressedKeys
+                    && List.member (Keyboard.Character "S") pressedKeys
+            then
                 not model.doSync
 
             else
                 model.doSync
     in
-    ( { model | pressedKeys = pressedKeys, doSync = doSync }
+    ( { model
+        | pressedKeys = pressedKeys
+
+        -- TODO revisit this , doSync = doSync
+      }
     , Cmd.none
     )
+
+
+
+--let
+--    pressedKeys =
+--        Keyboard.update keyMsg model.pressedKeys
+--
+--    doSync =
+--        if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
+--            not model.doSync
+--
+--        else
+--            model.doSync
+--in
+--( { model | pressedKeys = pressedKeys, doSync = doSync }
+--, Cmd.none
+--)
 
 
 delayCmd : Float -> msg -> Cmd msg
@@ -623,48 +651,64 @@ delayCmd delay msg =
     Task.perform (\_ -> msg) (Process.sleep delay)
 
 
-syncLR : Model -> ( Model, Cmd Msg )
-syncLR model =
+startSync : Model -> ( Model, Cmd Msg )
+startSync model =
+    -- Toggling doSync will cause the editor send the selected text
+    -- to Elm where it will be processed by 'SelectedText str'
+    -- and then by firstSyncLR
+    ( { model | doSync = not model.doSync, foundIds = [] }, Cmd.none )
+
+
+firstSyncLR : Model -> ( Model, Cmd Msg )
+firstSyncLR model =
     let
-        data =
-            if model.foundIdIndex == 0 then
-                let
-                    foundIds_ =
-                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree |> Debug.log "FOUND IDS"
+        foundIds_ =
+            Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SELECTED TEXT (1)") model.editRecord.tree |> Debug.log "FOUND IDS"
 
-                    id_ =
-                        List.head foundIds_ |> Maybe.withDefault "(nothing)"
-                in
-                { foundIds = foundIds_
-                , foundIdIndex = 1
-                , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
-                , selectedId = id_
-                , searchCount = 0
-                }
-
-            else
-                let
-                    id_ =
-                        List.Extra.getAt model.foundIdIndex model.foundIds |> Maybe.withDefault "(nothing)"
-                in
-                { foundIds = model.foundIds
-                , foundIdIndex = modBy (List.length model.foundIds) (model.foundIdIndex + 1)
-                , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
-                , selectedId = id_
-                , searchCount = model.searchCount + 1
-                }
+        id_ =
+            List.head foundIds_ |> Maybe.withDefault "(nothing)"
     in
     ( { model
-        | selectedId = data.selectedId
-        , foundIds = data.foundIds
-        , foundIdIndex = data.foundIdIndex
-        , searchCount = data.searchCount
-        , message = adjustId data.selectedId
+        | selectedId = id_
+        , foundIds = foundIds_
+        , oldSearchSourceText = model.searchSourceText
+        , foundIdIndex = 1
+        , searchCount = 0
+        , message = id_ ++ ":: " ++ (foundIds_ |> String.join ", ")
       }
-    , data.cmd
+    , View.Utility.setViewportForElement Config.renderedTextViewportID id_
     )
 
 
-firstSyncLR : Model -> String -> ( Model, Cmd Msg )
-firstSyncLR model searchSourceText =
-    ( { model | message = "SYNC: " ++ searchSourceText }, Cmd.none )
+nextSyncLR : Model -> ( Model, Cmd Msg )
+nextSyncLR model =
+    let
+        foundIds_ =
+            Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SELECTED TEXT (1)") model.editRecord.tree |> Debug.log "FOUND IDS"
+
+        id_ =
+            List.head foundIds_ |> Maybe.withDefault "(nothing)"
+
+        data =
+            { foundIds = foundIds_
+            , foundIdIndex = 1
+            , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
+            , selectedId = id_
+            , searchCount = 0
+            }
+    in
+    ( { model
+        | selectedId = id_
+        , doSync =
+            if model.foundIdIndex == 0 then
+                not model.doSync
+
+            else
+                model.doSync
+        , foundIds = foundIds_
+        , foundIdIndex = 1
+        , searchCount = 0
+        , message = id_ ++ ":: " ++ (foundIds_ |> String.join ", ")
+      }
+    , data.cmd
+    )

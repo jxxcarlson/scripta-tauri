@@ -11,14 +11,11 @@ import Element.Font as Font
 import Element.Input as Input
 import Html exposing (Html)
 import Html.Attributes
-import Maybe.Extra
 import Model exposing (AppMode(..), Model, Msg(..), PopupState(..))
-import Render.Msg exposing (MarkupMsg(..))
 import Scripta.API exposing (EditRecord)
 import Scripta.Language exposing (Language(..))
 import View.Button
 import View.Editor
-import View.Utility
 
 
 view : Model -> Html Msg
@@ -96,7 +93,8 @@ header model =
 
 footer model =
     row [ inFront (newDocument model), paddingXY 20 0, spacing 18, width fill, height (px 40), Font.size 14, Background.color Color.black, Font.color Color.white ]
-        [ el [] (text <| "Words: " ++ (String.words model.document.content |> List.length |> String.fromInt))
+        [ View.Button.syncLR
+        , el [] (text <| "Words: " ++ (String.words model.document.content |> List.length |> String.fromInt))
         , documentNeedsSavingIndicator model.documentNeedsSaving
         , el [] (text <| model.message)
         ]

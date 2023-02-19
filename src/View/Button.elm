@@ -10,6 +10,7 @@ module View.Button exposing
     , setDocument
     , setLanguage
     , setMode
+    , syncLR
     , tarFile
     )
 
@@ -53,7 +54,8 @@ setMode currentAppMode newAppMode =
                 ReaderMode ->
                     "Read"
 
-        tooltipText =  case newAppMode of
+        tooltipText =
+            case newAppMode of
                 EditorMode ->
                     "Go to Edit mode"
 
@@ -77,6 +79,17 @@ rawExport =
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = RawExport
         , label = "Raw"
+        }
+
+
+syncLR : Element Msg
+syncLR =
+    View.ButtonTemplate.template
+        { tooltipText = "Sync rendered text to source text"
+        , tooltipPlacement = below
+        , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
+        , msg = StartSync
+        , label = "->"
         }
 
 
