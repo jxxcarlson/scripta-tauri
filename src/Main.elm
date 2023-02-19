@@ -8,14 +8,13 @@ port module Main exposing (main)
 
 import Browser
 import Browser.Dom
-import Json.Encode
 import Config
 import Dict exposing (Dict)
 import Document exposing (Document)
 import Element exposing (..)
 import File.Download
 import Html.Attributes
-import Html.Events
+import Html.Events as Events
 import Http
 import Json.Decode
 import Json.Encode
@@ -118,6 +117,7 @@ init flags =
       , initialText = "??????"
       , linenumber = 0
       , doSync = False
+      , editorData = { begin = 0, end = 0 }
       , foundIdIndex = 0
       , searchSourceText = ""
       , searchCount = 0
@@ -459,6 +459,10 @@ setViewportForElement model result =
             ( model, Cmd.none )
 
 
+rightLeftSyncHelper firstLineNumber numberOfLines =
+    Events.onClick (SendLineNumber { begin = firstLineNumber, end = firstLineNumber + numberOfLines })
+
+
 {-| EDITOR SYNCHRONIZATION
 -}
 sync : Model -> MarkupMsg -> ( Model, Cmd Msg )
@@ -468,13 +472,9 @@ sync model msg_ =
             -- ( { model | lineNumber = m.loc.begin.row, message = "line " ++ String.fromInt (m.loc.begin.row + 1) }, Cmd.none )
             ( { model | linenumber = meta.begin }, Cmd.none )
 
-        SendLineNumber line ->
+        SendLineNumber editorData ->
             -- This is the code that highlights a line in the source text when rendered text is clicked.
-            let
-                linenumber =
-                    line |> String.toInt |> Maybe.withDefault 0 |> (\x -> x - 1)
-            in
-            ( { model | linenumber = linenumber, message = "Line " ++ (linenumber |> String.fromInt) }, Cmd.none )
+            ( { model | editorData = editorData |> Debug.log "EDITOR DATA" }, Cmd.none )
 
         SelectId id ->
             -- the element with this id will be highlighted
@@ -579,9 +579,11 @@ htmlId str =
 
 -- HELPERS
 
-encodeStringWithTag: String -> String -> Json.Encode.Value
-encodeStringWithTag tag str = 
-   Json.Encode.object [ (tag, Json.Encode.string str)]
+
+encodeStringWithTag : String -> String -> Json.Encode.Value
+encodeStringWithTag tag str =
+    Json.Encode.object [ ( tag, Json.Encode.string str ) ]
+
 
 getLanguage : Dict String String -> Maybe Language
 getLanguage dict =
@@ -628,7 +630,7 @@ syncLR model =
             if model.foundIdIndex == 0 then
                 let
                     foundIds_ =
-                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree
+                        Scripta.API.matchingIdsInAST model.searchSourceText model.editRecord.tree |> Debug.log "FOUND IDS"
 
                     id_ =
                         List.head foundIds_ |> Maybe.withDefault "(nothing)"
@@ -666,5 +668,3 @@ syncLR model =
 firstSyncLR : Model -> String -> ( Model, Cmd Msg )
 firstSyncLR model searchSourceText =
     ( { model | message = "SYNC: " ++ searchSourceText }, Cmd.none )
-
-

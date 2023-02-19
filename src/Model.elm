@@ -18,6 +18,7 @@ type alias Model =
     { count : Int
     , document : Document
     , linenumber : Int
+    , editorData : { begin : Int, end : Int }
     , doSync : Bool
     , foundIdIndex : Int
     , searchSourceText : String

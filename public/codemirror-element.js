@@ -20649,7 +20649,7 @@ window.initCodeMirror = function () {
 
     class CodemirrorEditor extends HTMLElement {
 
-        static get observedAttributes() { return ['editcommand','selection', 'linenumber', 'text']; }
+        static get observedAttributes() { return ['editcommand','editordata', 'selection', 'linenumber', 'text']; }
 
         constructor(self) {
 
@@ -20759,17 +20759,34 @@ window.initCodeMirror = function () {
                             editTransaction(editor, editEvent);
                             break
 
-                      case "linenumber":
-                             console.log("!!!@ IN linenumber !");
-                              // receive info from Elm (see Main.editor_)
-                              // scroll the editor to the given line
-                               var lineNumber = parseInt(newVal) + 2;
-                               var loc =  editor.state.doc.line(lineNumber);
-                               console.log("Attr case lineNumber", loc);
-                               console.log("position", loc.from);
-                               editor.dispatch({selection: {anchor: parseInt(loc.from)}});
-                               editor.scrollPosIntoView(loc.from);
-                            break
+                      case "editordata":
+                          // receive info from Elm (see Main.editor_)
+                          var  data = JSON.parse(newVal)
+
+                          // scroll the editor to the given line
+                           var lineNumber = data.begin
+                           var loc =  editor.state.doc.line(lineNumber);
+                           var lastLineNumber = editor.state.doc.lines;
+
+                           // offsetLineNumber: scroll to this line
+                           var offsetLineNumber = lineNumber
+                           if (lineNumber > 26)
+                             { if (lineNumber > editor.lastLineNumberFromClick)
+                                 { offsetLineNumber = offsetLineNumber + 10}
+                               else
+                                 { offsetLineNumber = offsetLineNumber - 10}
+                              }
+                           editor.lastLineNumberFromClick = lineNumber
+                           if (offsetLineNumber > lastLineNumber) {offsetLineNumber = lastLineNumber}
+                           var offsetLoc = editor.state.doc.line(offsetLineNumber);
+
+                            // set up selection from first to last line of block
+                            let loc2 = editor.state.doc.line(data.end);
+                            let sel = {anchor : parseInt(loc.from), head : parseInt(loc2.to) }
+
+                            editor.dispatch({selection: sel});
+                            editor.scrollPosIntoView(offsetLoc.from);
+                        break
 
                       case "text":
                             // receive info from Elm (see Main.editor_):
