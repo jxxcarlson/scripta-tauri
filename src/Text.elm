@@ -37,8 +37,8 @@ Click on rendered text (right window).  The corresponding
 source text will be highlighted.
 
 \\item
-Select some source text, then type ctrl-S.  The corresponding
-rendered text will be highlighted.
+Select some source text, then click on "Sync Left > Right" (lower left).  The corresponding
+rendered text will be highlighted.  Push repeatedly if necessary.
 
 \\item
 The editor has lots of features: type ctrl-A to go to the beginning of the
@@ -72,7 +72,8 @@ Visit \\link{scripta.io https://scripta.io} for the web version of this app.
 """
 
 
-microLaTeXDemo = """
+microLaTeXDemo =
+    """
 
 \\title{MicroLaTeX Guide}
 
@@ -337,8 +338,9 @@ buttons in the toolbar on the right.
 
 """
 
-l0Demo = 
-  """
+
+l0Demo =
+    """
 
 | title
 About L0
@@ -434,6 +436,7 @@ An ordinary block begins with `|` while a verbatim block
 begins with `||`.
 
 """
+
 
 l0DemoOLD =
     """

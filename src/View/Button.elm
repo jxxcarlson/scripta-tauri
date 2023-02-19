@@ -89,7 +89,7 @@ syncLR =
         , tooltipPlacement = below
         , attributes = [ Font.color white, Background.color gray, width (px buttonWidth) ]
         , msg = StartSync
-        , label = "->"
+        , label = "Sync Left > Right"
         }
 
 

@@ -120,8 +120,8 @@ init flags =
       , doSync = False
       , editorData = { begin = 0, end = 0 }
       , foundIdIndex = 0
-      , searchSourceText = ""
-      , oldSearchSourceText = "___@@@___"
+      , sourceTextFragment = ""
+      , oldSearchSourceFragment = "___@@@___"
       , searchCount = 0
       , selectedId = ""
       , selectionHighLighted = Unselected
@@ -214,7 +214,7 @@ update msg model =
 
         SelectedText str ->
             -- store the text selected in the editor and sent to Elm in the model
-            firstSyncLR { model | searchSourceText = str |> Debug.log "SELECTED TEXT (0)" }
+            syncLR { model | sourceTextFragment = str }
 
         -- InputText { position, source } ->
         --             Frontend.Editor.inputText model { position = position, source = source }
@@ -478,7 +478,7 @@ sync model msg_ =
 
         SendLineNumber editorData ->
             -- This is the code that highlights a line in the source text when rendered text is clicked.
-            ( { model | editorData = editorData |> Debug.log "EDITOR DATA" }, Cmd.none )
+            ( { model | editorData = editorData }, Cmd.none )
 
         SelectId id ->
             -- the element with this id will be highlighted
@@ -629,23 +629,6 @@ updateKeys model keyMsg =
     )
 
 
-
---let
---    pressedKeys =
---        Keyboard.update keyMsg model.pressedKeys
---
---    doSync =
---        if List.member Keyboard.Control pressedKeys && List.member (Keyboard.Character "S") pressedKeys then
---            not model.doSync
---
---        else
---            model.doSync
---in
---( { model | pressedKeys = pressedKeys, doSync = doSync }
---, Cmd.none
---)
-
-
 delayCmd : Float -> msg -> Cmd msg
 delayCmd delay msg =
     Task.perform (\_ -> msg) (Process.sleep delay)
@@ -655,15 +638,24 @@ startSync : Model -> ( Model, Cmd Msg )
 startSync model =
     -- Toggling doSync will cause the editor send the selected text
     -- to Elm where it will be processed by 'SelectedText str'
-    -- and then by firstSyncLR
-    ( { model | doSync = not model.doSync, foundIds = [] }, Cmd.none )
+    -- and then by syncLR
+    ( { model | doSync = not model.doSync }, Cmd.none )
+
+
+syncLR : Model -> ( Model, Cmd Msg )
+syncLR model =
+    if model.sourceTextFragment /= model.oldSearchSourceFragment then
+        firstSyncLR model
+
+    else
+        nextSyncLR model
 
 
 firstSyncLR : Model -> ( Model, Cmd Msg )
 firstSyncLR model =
     let
         foundIds_ =
-            Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SELECTED TEXT (1)") model.editRecord.tree |> Debug.log "FOUND IDS"
+            Scripta.API.matchingIdsInAST model.sourceTextFragment model.editRecord.tree
 
         id_ =
             List.head foundIds_ |> Maybe.withDefault "(nothing)"
@@ -671,10 +663,9 @@ firstSyncLR model =
     ( { model
         | selectedId = id_
         , foundIds = foundIds_
-        , oldSearchSourceText = model.searchSourceText
-        , foundIdIndex = 1
+        , oldSearchSourceFragment = model.sourceTextFragment
+        , foundIdIndex = 0
         , searchCount = 0
-        , message = id_ ++ ":: " ++ (foundIds_ |> String.join ", ")
       }
     , View.Utility.setViewportForElement Config.renderedTextViewportID id_
     )
@@ -683,32 +674,19 @@ firstSyncLR model =
 nextSyncLR : Model -> ( Model, Cmd Msg )
 nextSyncLR model =
     let
-        foundIds_ =
-            Scripta.API.matchingIdsInAST (model.searchSourceText |> Debug.log "SELECTED TEXT (1)") model.editRecord.tree |> Debug.log "FOUND IDS"
+        n =
+            List.length model.foundIds
+
+        foundIndex =
+            model.foundIdIndex + 1 |> modBy n
 
         id_ =
-            List.head foundIds_ |> Maybe.withDefault "(nothing)"
-
-        data =
-            { foundIds = foundIds_
-            , foundIdIndex = 1
-            , cmd = View.Utility.setViewportForElement Config.renderedTextViewportID id_
-            , selectedId = id_
-            , searchCount = 0
-            }
+            List.Extra.getAt foundIndex model.foundIds
+                |> Maybe.withDefault "(no such index)"
     in
     ( { model
         | selectedId = id_
-        , doSync =
-            if model.foundIdIndex == 0 then
-                not model.doSync
-
-            else
-                model.doSync
-        , foundIds = foundIds_
-        , foundIdIndex = 1
-        , searchCount = 0
-        , message = id_ ++ ":: " ++ (foundIds_ |> String.join ", ")
+        , foundIdIndex = foundIndex
       }
-    , data.cmd
+    , View.Utility.setViewportForElement Config.renderedTextViewportID id_
     )

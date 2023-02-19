@@ -22,8 +22,8 @@ type alias Model =
     , doSync : Bool
     , selectedText : String
     , foundIdIndex : Int
-    , searchSourceText : String
-    , oldSearchSourceText : String
+    , sourceTextFragment : String
+    , oldSearchSourceFragment : String
     , searchCount : Int
     , selectedId : String
     , selectionHighLighted : SelectionState
