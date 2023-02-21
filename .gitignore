@@ -1,11 +1,16 @@
-.vscode/
-elm-stuff/
-out/
+# large things
+*.zip
 public/main.js
-node_modules/
-katex/
-freezer/
-dist/
-public_copy/
+out/main.js
+elm-stuff/
+
+# editor
 .idea/
-scripta-desktop.zip
+.vscode/
+
+# junk
+node_modules/
+freezer/
+other-stuff/
+stuff/
+public_copy/

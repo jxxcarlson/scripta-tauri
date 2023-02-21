@@ -1,0 +1,129 @@
+ 
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Main</title>
+
+  <script src="katex-custom-element.js"></script>
+
+  <script src="codemirror-element.js"></script>
+
+   <link rel="stylesheet" href="./katex.min.css"> 
+
+   <title>Scripta Demo</title>
+
+  <script src="./main.js"></script>
+
+  <script type="module" src="./tauri.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="main"></div>
+
+<script type="module">
+
+    import {pi} from './tauri.js'
+
+		var root = document.getElementById('main');
+		var app = Elm.Main.init({node: root, flags:  {  }});
+    init(app);
+
+    console.log("pi =", pi)
+
+    // PORTS: RECEIVE DATA FROM ELM
+
+    app.ports.writeDocument.subscribe(data => {
+      console.log("I want to save", data.name);
+      console.log("BASE DIR", window.__TAURI__.fs.BaseDirectory.Desktop)
+      window.__TAURI__.fs.writeTextFile(
+        { path: data.path, contents: data.content },
+        {
+          dir: window.__TAURI__.fs.BaseDirectory.Desktop
+        }
+      )
+
+    });
+
+    app.ports.writePreferences.subscribe(data => {
+      console.log("SAVING PREFERENCES:", data);
+      window.__TAURI__.fs.writeTextFile(
+        { path: '.scripta-preferences.txt', contents: data.preferences },
+        {
+          dir: window.__TAURI__.fs.BaseDirectory.Desktop
+        }
+      )
+ 
+    });
+
+
+  app.ports.readPreferences.subscribe((whatever) => {
+  console.log("READ PREFERENCES") 
+  window.__TAURI__.fs.exists('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
+    .then((exists) => { if (exists) { sendPreferences() } else { sendDefaultPreferences() } })
+    .catch(console.error) // just in case i messed up
+  });
+
+  app.ports.setScriptaDirectory.subscribe((whatever) => {
+    console.log("setScriptaDirectory") 
+    window.__TAURI__.fs.exists('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop })
+      .then((exists) => { if (exists) 
+          { console.log("scripta directory exists") } else 
+          { console.log("scripta directory DOES NOT exist, making one for you.")
+            window.__TAURI__.fs.createDir('scripta', { dir: window.__TAURI__.fs.BaseDirectory.Desktop, recursive: false });
+          }}) 
+      .catch(console.error) // just in case i messed up
+  });
+
+    //
+    // PORTS: SEND DATA TO ELM
+    //
+
+    // Send data to Elm: contents of the preferences file
+    const sendPreferences = function () { 
+
+        window.__TAURI__.fs.readTextFile('.scripta-preferences.txt', { dir: window.__TAURI__.fs.BaseDirectory.Desktop }).then((contents) => {
+          if (typeof contents === 'string') {
+
+            app.ports.receivePreferences.send({preferences: contents});
+
+          } else { 
+
+            alert("No preferences file found")
+          }
+          
+        })
+
+      } // sendPreferences
+
+      const sendDefaultPreferences = function () { 
+
+        app.ports.receivePreferences.send({preferences: "language: MicroLaTeX\nhome: Desktop"});
+
+      } // sendDefaultPreferences
+;
+
+    // Send data to Elm: name, path, and contents of document
+    app.ports.openFile.subscribe((whatever) => {
+      window.__TAURI__.dialog.open().then((filepath) => {
+        if (typeof filepath === 'string') {
+          window.__TAURI__.fs.readTextFile(filepath).then((content) => {
+            console.log("FILEPATH", filepath)
+            app.ports.receiveDocument.send({name: filepath, path: filepath, content: content});
+          })
+        } else {
+          alert("Bad file selection (cancelled?)")
+        }
+      })
+
+    });
+
+  
+
+</script>
+
+</body>
+</html>
