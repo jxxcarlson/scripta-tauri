@@ -1,6 +1,6 @@
 {
   "build": {
-    "beforeBuildCommand": "elm make src/Main.elm --output=out/main.js --optimize",
+    "beforeBuildCommand": "elm make src/Main.elm --output=public/main.js --optimize",
     "beforeDevCommand": "elm make src/Main.elm --output=public/main.js; npx serve public",
     "devPath": "http://localhost:4000",
     "distDir": "../public",
